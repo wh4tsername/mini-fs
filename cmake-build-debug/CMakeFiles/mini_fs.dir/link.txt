@@ -1,1 +1,0 @@
-/usr/bin/cc -g   CMakeFiles/mini_fs.dir/main.c.o CMakeFiles/mini_fs.dir/client.c.o  -o mini_fs 
