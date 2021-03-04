@@ -1,10 +1,5 @@
 #include "client.h"
 
-#include <stdio.h>
-#include <string.h>
-
-const char* QUIT_CMD_ = "quit";
-
 bool read(char* buffer, int buffer_size) {
     printf("mini-fs$ ");
 
@@ -15,7 +10,7 @@ bool read(char* buffer, int buffer_size) {
     // cut '\n' symbol
     buffer[cmd_length - 1] = '\0';
 
-    if (strcmp(buffer, QUIT_CMD_) == 0) {
+    if (strcmp(buffer, QUIT_CMD) == 0) {
         return false;
     }
 
