@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/wasd/github/mini-fs/client.c
+client.h
+/home/wasd/github/mini-fs/client.h
+stdio.h
+-
+string.h
+-
+
+/home/wasd/github/mini-fs/client.h
+stdbool.h
+-
+
