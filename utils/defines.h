@@ -1,0 +1,23 @@
+#ifndef MINI_FS_UTILS_DEFINE_H_
+#define MINI_FS_UTILS_DEFINE_H_
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define panic(msg)              \
+    fprintf(stderr, "%s", msg); \
+    exit(EXIT_FAILURE);
+
+#define conditional_handle_error(stmt, msg) \
+    if (stmt) {                             \
+      fprintf(stderr, "%s", msg);           \
+      exit(EXIT_FAILURE);                   \
+    }
+
+#define conditional_parse_errno(stmt)         \
+    if (stmt) {                               \
+      fprintf(stderr, "%s", strerror(errno)); \
+      exit(EXIT_FAILURE);                     \
+    }
+
+#endif //MINI_FS_UTILS_DEFINE_H_
