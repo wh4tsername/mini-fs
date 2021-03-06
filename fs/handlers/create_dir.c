@@ -5,28 +5,6 @@
 #include <helpers.h>
 #include <constants/fs_constants.h>
 
-const char* find_last_occurrence(const char* str, char ch) {
-    uint16_t length = strlen(str);
-    for (int i = length - 1; i >= 0; --i) {
-        if (*(str + i) == ch) {
-            return str + i;
-        }
-    }
-
-    return NULL;
-}
-
-void delete_last_slash_and_copy_res(const char* str,
-                                    uint16_t str_length,
-                                    char* dest) {
-    memcpy(dest, str, str_length);
-    if (*(str + str_length - 1) != '/') {
-        dest[str_length] = '\0';
-    } else {
-        dest[str_length - 1] = '\0';
-    }
-}
-
 bool check_for_duplicate_dir(int fd,
                              struct inode* inode,
                              uint16_t block_id,
@@ -47,18 +25,9 @@ void create_dir(const char* path) {
     int fd = open(FS_FILENAME, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
-    uint16_t path_length = strlen(path);
-    char buffer[256];
-    delete_last_slash_and_copy_res(path, path_length, buffer);
-
-    conditional_handle_error(path[0] != '/' || strlen(buffer) == 0,
-                             "incorrect path");
-
-    const char* dir_name = find_last_occurrence(buffer, '/') + 1;
-
     char path_to_traverse[256];
-    memcpy(path_to_traverse, buffer, dir_name - buffer);
-    path_to_traverse[dir_name - buffer] = '\0';
+    char dir_name[256];
+    split_path(path, path_to_traverse, dir_name);
 
 //    printf("%s\n", path_to_traverse);
 //    printf("%s\n", dir_name);

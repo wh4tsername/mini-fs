@@ -1,6 +1,7 @@
 #include <helpers.h>
 #include <utils.h>
 #include <defines.h>
+#include <string_utils.h>
 #include "../../fs/dir_record.h"
 
 #include <string.h>
@@ -113,4 +114,22 @@ char* parse_path(const char* path, char* next_token) {
     next_token[next_token_length] = '\0';
 
     return next_slash_pos;
+}
+
+void split_path(const char* path,
+                char* path_to_traverse,
+                char* dir_name) {
+    uint16_t path_length = strlen(path);
+    char buffer[256];
+    delete_last_slash_and_copy_res(path, path_length, buffer);
+
+    conditional_handle_error(path[0] != '/' || strlen(buffer) == 0,
+                             "incorrect path");
+
+    int32_t last_slash_pos = find_last_occurrence(buffer, '/');
+    memcpy(dir_name, buffer + last_slash_pos + 1, path_length - last_slash_pos - 2);
+    dir_name[path_length - last_slash_pos - 2] = '\0';
+
+    memcpy(path_to_traverse, buffer, last_slash_pos + 1);
+    path_to_traverse[last_slash_pos + 1] = '\0';
 }

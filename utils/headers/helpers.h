@@ -17,4 +17,8 @@ void traverse_path(int fd, const char* path, struct inode* res);
 
 char* parse_path(const char* path, char* next_token);
 
+void split_path(const char* path,
+                char* path_to_traverse,
+                char* dir_name);
+
 #endif //MINI_FS_UTILS_HELPERS_H_
