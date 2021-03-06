@@ -1,8 +1,9 @@
 #include "handlers.h"
-#include "../../utils/defines.h"
-#include "../../utils/utils.h"
-#include "../../utils/constants/constants.h"
-#include "../../utils/constants/fs_constants.h"
+#include <defines.h>
+#include <utils.h>
+#include <helpers.h>
+#include <constants/constants.h>
+#include <constants/fs_constants.h>
 #include "../superblock.h"
 #include "../dir_record.h"
 

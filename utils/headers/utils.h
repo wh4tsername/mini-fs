@@ -5,9 +5,9 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#include "../fs/dir_record.h"
-#include "../fs/inode.h"
-#include "../fs/superblock.h"
+#include "../../fs/dir_record.h"
+#include "../../fs/inode.h"
+#include "../../fs/superblock.h"
 
 int write_retry(int fd, const char* buffer, int buffer_size);
 
@@ -46,14 +46,5 @@ void read_dir_records(int fd,
                       uint16_t block_id,
                       struct dir_record* records,
                       uint16_t num_records);
-
-uint16_t create_dir_block_and_inode(int fd,
-                                    struct superblock* sb,
-                                    bool is_root,
-                                    uint16_t prev_inode_id);
-
-void traverse_path(int fd, const char* path, struct inode* res);
-
-char* parse_path(const char* path, char* next_token);
 
 #endif //MINI_FS__UTILS_H_

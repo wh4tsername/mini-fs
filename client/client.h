@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../utils/constants/commands.h"
+#include <constants/commands.h>
 
 // read function
 bool read_command(char* buffer, int buffer_size);

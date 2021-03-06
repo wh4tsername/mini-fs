@@ -1,6 +1,6 @@
 #include "handlers.h"
-#include "../../utils/constants/fs_constants.h"
-#include "../../utils/defines.h"
+#include <constants/fs_constants.h>
+#include <defines.h>
 
 void destroy_fs() {
     int fd = open(FS_FILENAME, O_RDWR, S_IRUSR | S_IWUSR);

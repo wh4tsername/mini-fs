@@ -1,4 +1,5 @@
 #include "client.h"
+
 #include <stdint.h>
 
 bool read_command(char* buffer, int buffer_size) {

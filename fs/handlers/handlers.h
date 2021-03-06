@@ -15,4 +15,6 @@ void list_dir(const char* path);
 
 void create_dir(const char* path);
 
+void delete_object(const char* path);
+
 #endif //MINI_FS__HANDLERS_H_

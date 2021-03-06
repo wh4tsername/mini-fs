@@ -1,7 +1,7 @@
 #ifndef MINI_FS_UTILS_FS_CONSTANTS_H_
 #define MINI_FS_UTILS_FS_CONSTANTS_H_
 
-#include "struct_sizes.h"
+#include <constants/struct_sizes.h>
 
 #define FS_FILENAME "../fs.bin"
 #define FS_SIZE                  \

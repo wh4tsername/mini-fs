@@ -1,7 +1,8 @@
 #include "handlers.h"
-#include "../../utils/utils.h"
-#include "../../utils/defines.h"
-#include "../../utils/constants/fs_constants.h"
+#include <utils.h>
+#include <helpers.h>
+#include <defines.h>
+#include <constants/fs_constants.h>
 
 #include <stdlib.h>
 

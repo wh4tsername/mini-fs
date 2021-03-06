@@ -1,5 +1,6 @@
 #include "superblock.h"
-#include "../utils/defines.h"
+
+#include <defines.h>
 
 void init_superblock(struct superblock* sb_pointer) {
     for (uint16_t i = 0; i < NUM_BLOCKS; ++i) {

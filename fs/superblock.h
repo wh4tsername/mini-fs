@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#include "../utils/constants/constants.h"
+#include <constants/constants.h>
 #include "inode.h"
 
 struct superblock {

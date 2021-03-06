@@ -1,7 +1,9 @@
 #include "handlers.h"
-#include "../../utils/defines.h"
-#include "../../utils/utils.h"
-#include "../../utils/constants/fs_constants.h"
+
+#include <defines.h>
+#include <utils.h>
+#include <helpers.h>
+#include <constants/fs_constants.h>
 
 const char* find_last_occurrence(const char* str, char ch) {
     uint16_t length = strlen(str);
@@ -25,6 +27,22 @@ void delete_last_slash_and_copy_res(const char* str,
     }
 }
 
+bool check_for_duplicate_dir(int fd,
+                             struct inode* inode,
+                             uint16_t block_id,
+                             const char* name) {
+    struct dir_record records[16];
+    read_dir_records(fd, block_id, records, inode->size);
+
+    for (uint16_t i = 0; i < inode->size; ++i) {
+        if (strcmp(name, records[i].name) == 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void create_dir(const char* path) {
     int fd = open(FS_FILENAME, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
@@ -42,8 +60,8 @@ void create_dir(const char* path) {
     memcpy(path_to_traverse, buffer, dir_name - buffer);
     path_to_traverse[dir_name - buffer] = '\0';
 
-    printf("%s\n", path_to_traverse);
-    printf("%s\n", dir_name);
+//    printf("%s\n", path_to_traverse);
+//    printf("%s\n", dir_name);
 
     // get superblock
     struct superblock sb;
@@ -64,6 +82,11 @@ void create_dir(const char* path) {
                     (char*)&record,
                     DIR_RECORD_SIZE);
     uint16_t inode_id = record.inode_id;
+
+    conditional_handle_error(
+        check_for_duplicate_dir(fd, &inode, inode.block_ids[0], dir_name),
+        "directory with such name already exists"
+        );
 
     uint16_t next_inode_id = create_dir_block_and_inode(fd, &sb, false, inode_id);
 

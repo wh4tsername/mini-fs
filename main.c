@@ -3,7 +3,7 @@
 
 #include "client/client.h"
 #include "fs/handlers/handlers.h"
-#include "utils/defines.h"
+#include <defines.h>
 
 int main() {
     const int BUFFER_LENGTH = 256;
