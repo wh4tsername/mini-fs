@@ -1,4 +1,3 @@
-# MINI-FS  
 ## DESCRIPTION  
 Mini file system stored in `fs.bin` file  
 ## COMMANDS  
