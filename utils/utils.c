@@ -43,6 +43,18 @@ int read_retry(const int fd, char* buffer,
     return total_bytes;
 }
 
+void write_to_superblock(int fd, const struct superblock* sb) {
+    lseek(fd, 0, SEEK_SET);
+    conditional_handle_error(write_retry(fd, (const char*)sb, SUPERBLOCK_SIZE) == -1,
+                             "error while writing to file");
+}
+
+void read_from_superblock(int fd, struct superblock* sb) {
+    lseek(fd, 0, SEEK_SET);
+    conditional_handle_error(read_retry(fd, (char*)sb, SUPERBLOCK_SIZE) == -1,
+                             "error while reading from file");
+}
+
 void write_to_inode(int fd,
                     uint16_t inode_id,
                     const struct inode* inode) {
@@ -145,6 +157,35 @@ void read_dir_records(int fd,
     }
 }
 
+uint16_t create_dir_block_and_inode(int fd,
+                                    struct superblock* sb,
+                                    bool is_root,
+                                    uint16_t prev_inode_id) {
+    uint16_t block_id = occupy_block(sb);
+    uint16_t inode_id = occupy_inode(sb);
+
+    // create inode
+    struct inode inode;
+    init_inode(&inode);
+    inode.block_ids[0] = block_id;
+    inode.is_file = false;
+    inode.size = 2;
+
+    // create dir_records
+    struct dir_record records[2];
+    init_dir_record(&records[0]);
+    init_dir_record(&records[1]);
+    records[0].inode_id = inode_id;
+    records[1].inode_id = is_root ? inode_id : prev_inode_id;
+    strcpy(records[0].name,".");
+    strcpy(records[1].name,"..");
+
+    write_dir_records(fd, block_id, records, inode.size);
+    write_to_inode(fd, inode_id, &inode);
+
+    return inode_id;
+}
+
 // traverse recursive
 void traverse_recursively(int fd,
                           const char* path,
@@ -159,7 +200,7 @@ void traverse_recursively(int fd,
     if (strcmp(current_layer, "/") == 0) {
         memcpy(res, current, sizeof(struct inode));
     } else {
-        struct dir_record records[15];
+        struct dir_record records[16];
 
         read_dir_records(fd, current->block_ids[0], records, current->size);
 
@@ -192,6 +233,7 @@ void traverse_path(int fd, const char* path, struct inode* res) {
     read_from_inode(fd, 1, &cur_inode);
 
     traverse_recursively(fd, path, &cur_inode, res);
+    // TODO should check res->is_file?
 }
 
 char* parse_path(const char* path, char* next_token) {

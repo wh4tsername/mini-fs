@@ -29,7 +29,16 @@ int main() {
 
             list_dir(path);
         } else if (strcmp(cmd, CREATE_DIR_CMD) == 0) {
-            create_dir(); // TODO
+            // no arg check
+            if (args == NULL || strlen(args) == 0) {
+                printf("mkdir command requires dir name arg!\n");
+                continue;
+            }
+
+            char path[BUFFER_LENGTH];
+            parse_token(args, path);
+
+            create_dir(path);
         } else if (strlen(cmd) == 0) {
         } else {
             printf("unknown command!\n");
