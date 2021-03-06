@@ -16,12 +16,22 @@ void make_partition(int fd) {
 
     // create dir_records
     struct dir_record records[2];
+    init_dir_record(&records[0]);
+    init_dir_record(&records[1]);
     records[0].inode_id = inode_id;
     records[1].inode_id = inode_id;
     strcpy(records[0].name,".");
     strcpy(records[1].name,"..");
 
+    // create inode
+    struct inode first_inode;
+    init_inode(&first_inode);
+    first_inode.block_ids[0] = block_id;
+    first_inode.is_file = false;
+    first_inode.size = 2;
+
     write_dir_records(fd, block_id, records, 2);
+    write_to_inode(fd, inode_id, &first_inode);
 
     // write superblock
     lseek(fd, 0, SEEK_SET);

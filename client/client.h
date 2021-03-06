@@ -11,6 +11,6 @@
 bool read_command(char* buffer, int buffer_size);
 
 // parse cmd
-char* parse_cmd(char* buffer, char* cmd);
+char* parse_token(char* buffer, char* token);
 
 #endif //MINI_FS__CLIENT_H_

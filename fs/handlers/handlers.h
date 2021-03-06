@@ -11,7 +11,7 @@ void init_fs();
 
 void destroy_fs();
 
-void list_dir();
+void list_dir(const char* path);
 
 void create_dir();
 

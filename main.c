@@ -10,18 +10,27 @@ int main() {
     char* buffer = malloc(BUFFER_LENGTH);
 
     while (read_command(buffer, BUFFER_LENGTH)) {
-        char cmd[256];
-        char* args = parse_cmd(buffer, cmd);
+        char cmd[BUFFER_LENGTH];
+        char* args = parse_token(buffer, cmd);
 
-        if (strcmp(buffer, INIT_CMD) == 0) {
+        if (strcmp(cmd, INIT_CMD) == 0) {
             init_fs();
-        } else if (strcmp(buffer, DESTROY_CMD) == 0) {
+        } else if (strcmp(cmd, DESTROY_CMD) == 0) {
             destroy_fs();
-        } else if (strcmp(buffer, LS_CMD) == 0) {
-            list_dir(); // TODO
-        } else if (strcmp(buffer, CREATE_DIR_CMD) == 0) {
+        } else if (strcmp(cmd, LS_CMD) == 0) {
+            // no arg check
+            if (args == NULL || strlen(args) == 0) {
+                printf("ls command requires path arg!\n");
+                continue;
+            }
+
+            char path[BUFFER_LENGTH];
+            parse_token(args, path);
+
+            list_dir(path);
+        } else if (strcmp(cmd, CREATE_DIR_CMD) == 0) {
             create_dir(); // TODO
-        } else if (strlen(buffer) == 0) {
+        } else if (strlen(cmd) == 0) {
         } else {
             printf("unknown command!\n");
         }

@@ -18,16 +18,16 @@ bool read_command(char* buffer, int buffer_size) {
     return true;
 }
 
-char* parse_cmd(char* buffer, char* cmd) {
-    char* cmd_pos = strchr(buffer, ' ');
-    if (cmd_pos == NULL) {
-        strcpy(cmd, buffer);
+char* parse_token(char* buffer, char* token) {
+    char* token_pos = strchr(buffer, ' ');
+    if (token_pos == NULL) {
+        strcpy(token, buffer);
     } else {
-        uint16_t cmd_size = cmd_pos - buffer;
+        uint16_t cmd_size = token_pos - buffer;
 
-        memcpy(cmd, buffer, cmd_size);
-        cmd[cmd_size] = '\0';
+        memcpy(token, buffer, cmd_size);
+        token[cmd_size] = '\0';
     }
 
-    return cmd_pos;
+    return token_pos == NULL ? NULL : token_pos + 1;
 }
