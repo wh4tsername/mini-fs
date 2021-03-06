@@ -1,3 +1,6 @@
+# MINI-FS  
+## DESCRIPTION  
+Mini file system stored in `fs.bin` file  
 ## COMMANDS  
 `quit` - to quit mini-fs client  
 `init` - to initialise mini-fs  
