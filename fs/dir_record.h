@@ -10,6 +10,6 @@ struct dir_record {
   char name[DIR_NAME_LENGTH];
 };
 
-void init_dir_record(struct dir_record* dir_record_pointer);
+void reset_dir_record(struct dir_record* dir_record_pointer);
 
 #endif //MINI_FS_FS_DIR_RECORD_H_

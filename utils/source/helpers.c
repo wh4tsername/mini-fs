@@ -15,15 +15,15 @@ uint16_t create_dir_block_and_inode(int fd,
 
     // create inode
     struct inode inode;
-    init_inode(&inode);
+    reset_inode(&inode);
     inode.block_ids[0] = block_id;
     inode.is_file = false;
     inode.size = 2;
 
     // create dir_records
     struct dir_record records[2];
-    init_dir_record(&records[0]);
-    init_dir_record(&records[1]);
+    reset_dir_record(&records[0]);
+    reset_dir_record(&records[1]);
     records[0].inode_id = inode_id;
     records[1].inode_id = is_root ? inode_id : prev_inode_id;
     strcpy(records[0].name,".");
@@ -123,12 +123,18 @@ void split_path(const char* path,
     char buffer[256];
     delete_last_slash_and_copy_res(path, path_length, buffer);
 
-    conditional_handle_error(path[0] != '/' || strlen(buffer) == 0,
-                             "incorrect path");
+    uint16_t buffer_length = strlen(buffer);
+    conditional_handle_error(
+        path[0] != '/' || buffer_length == 0,
+        "incorrect path");
 
     int32_t last_slash_pos = find_last_occurrence(buffer, '/');
-    memcpy(dir_name, buffer + last_slash_pos + 1, path_length - last_slash_pos - 2);
-    dir_name[path_length - last_slash_pos - 2] = '\0';
+    memcpy(dir_name,
+           buffer + last_slash_pos + 1,
+           buffer_length - last_slash_pos - 1);
+    dir_name[buffer_length - last_slash_pos - 1] = '\0';
+
+    conditional_handle_error(strlen(dir_name) == 0, "incorrect path");
 
     memcpy(path_to_traverse, buffer, last_slash_pos + 1);
     path_to_traverse[last_slash_pos + 1] = '\0';

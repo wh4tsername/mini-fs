@@ -13,6 +13,6 @@ struct inode {
   bool is_file;
 };
 
-void init_inode(struct inode* inode_pointer);
+void reset_inode(struct inode* inode_pointer);
 
 #endif //MINI_FS_FS_INODE_H_

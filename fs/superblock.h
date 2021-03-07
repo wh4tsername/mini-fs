@@ -11,7 +11,7 @@ struct superblock {
   bool occupied_inodes_mask[NUM_INODES];
 };
 
-void init_superblock(struct superblock* sb_pointer);
+void reset_superblock(struct superblock* sb_pointer);
 
 uint16_t occupy_block(struct superblock* sb_pointer);
 

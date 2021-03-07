@@ -10,7 +10,7 @@
 void make_partition(int fd) {
     // create superblock
     struct superblock sb;
-    init_superblock(&sb);
+    reset_superblock(&sb);
 
     create_dir_block_and_inode(fd, &sb, true, 0);
 

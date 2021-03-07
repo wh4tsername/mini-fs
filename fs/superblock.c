@@ -2,7 +2,7 @@
 
 #include <defines.h>
 
-void init_superblock(struct superblock* sb_pointer) {
+void reset_superblock(struct superblock* sb_pointer) {
     for (uint16_t i = 0; i < NUM_BLOCKS; ++i) {
         sb_pointer->occupied_blocks_mask[i] = false;
     }

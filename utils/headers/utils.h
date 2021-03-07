@@ -47,4 +47,10 @@ void read_dir_records(int fd,
                       struct dir_record* records,
                       uint16_t num_records);
 
+void make_zeros(int fd, uint32_t offset, uint32_t size);
+
+void erase_block(int fd, uint16_t block_id);
+
+void erase_inode(int fd, uint16_t inode_id);
+
 #endif //MINI_FS__UTILS_H_

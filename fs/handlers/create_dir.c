@@ -34,17 +34,17 @@ void create_dir(const char* path) {
 
     // get superblock
     struct superblock sb;
-    init_superblock(&sb);
+    reset_superblock(&sb);
     read_from_superblock(fd, &sb);
 
     // get inode of prev dir
     struct inode inode;
-    init_inode(&inode);
+    reset_inode(&inode);
     traverse_path(fd, path_to_traverse, &inode);
 
     // get block of prev dir
     struct dir_record record;
-    init_dir_record(&record);
+    reset_dir_record(&record);
     read_from_block(fd,
                     inode.block_ids[0],
                     0,
@@ -57,10 +57,13 @@ void create_dir(const char* path) {
         "directory with such name already exists"
         );
 
-    uint16_t next_inode_id = create_dir_block_and_inode(fd, &sb, false, inode_id);
+    uint16_t next_inode_id = create_dir_block_and_inode(fd,
+                                                        &sb,
+                                                        false,
+                                                        inode_id);
 
     // create dir_record for prev dir
-    init_dir_record(&record);
+    reset_dir_record(&record);
     record.inode_id = next_inode_id;
     strcpy(record.name, dir_name);
 

@@ -101,7 +101,7 @@ void write_to_block(const int fd,
 
     conditional_handle_error(block_id > NUM_BLOCKS,
                              "incorrect block_id");
-    conditional_handle_error(inblock_offset + buffer_size >= BLOCK_SIZE,
+    conditional_handle_error(inblock_offset + buffer_size > BLOCK_SIZE,
                              "write to block out of bounds");
 
     lseek(fd, offset, SEEK_SET);
@@ -155,4 +155,32 @@ void read_dir_records(int fd,
                         (char *)&records[i],
                         DIR_RECORD_SIZE);
     }
+}
+
+void make_zeros(int fd, uint32_t offset, uint32_t size) {
+    char* buffer = malloc(size);
+    memset(buffer, '\0', size);
+
+    lseek(fd, offset, SEEK_SET);
+    write_retry(fd, buffer, size);
+
+    free(buffer);
+}
+
+void erase_block(int fd, uint16_t block_id) {
+    uint32_t size = BLOCK_SIZE;
+
+    char* buffer = malloc(size);
+    memset(buffer, '\0', size);
+
+    write_to_block(fd, block_id, 0, buffer, size);
+
+    free(buffer);
+}
+
+void erase_inode(int fd, uint16_t inode_id) {
+    struct inode inode;
+    reset_inode(&inode);
+
+    write_to_inode(fd, inode_id, &inode);
 }
