@@ -19,7 +19,16 @@ void list_dir(const char* path) {
     read_dir_records(fd, block_id, records, inode.size);
 
     for(uint16_t i = 0; i < inode.size; ++i) {
-        printf("%s\n", records[i].name);
+        printf("%s", records[i].name);
+
+        struct inode obj_inode;
+        reset_inode(&obj_inode);
+        read_from_inode(fd, records[i].inode_id, &obj_inode);
+
+        if (obj_inode.is_file) {
+            printf(" - file");
+        }
+        printf("\n");
     }
 
     close(fd);

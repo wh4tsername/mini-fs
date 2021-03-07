@@ -68,6 +68,9 @@ void traverse_recursively(int fd,
         struct inode next;
         read_from_inode(fd, records[i].inode_id, &next);
 
+        conditional_handle_error(next.is_file,
+                                 "trying to enter file");
+
         if (remaining_path == NULL) {
             memcpy(res, &next, sizeof(struct inode));
         } else {
@@ -82,7 +85,6 @@ void traverse_path(int fd, const char* path, struct inode* res) {
     read_from_inode(fd, 1, &cur_inode);
 
     traverse_recursively(fd, path, &cur_inode, res);
-    // TODO should check res->is_file?
 }
 
 char* parse_path(const char* path, char* next_token) {

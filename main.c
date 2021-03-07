@@ -50,6 +50,17 @@ int main() {
             parse_token(args, path);
 
             delete_object(path);
+        } else if (strcmp(cmd, CREATE_FILE_CMD) == 0) {
+            // no arg check
+            if (args == NULL || strlen(args) == 0) {
+                printf("touch command requires file name arg!\n");
+                continue;
+            }
+
+            char path[BUFFER_LENGTH];
+            parse_token(args, path);
+
+            create_file(path);
         } else if (strlen(cmd) == 0) {
         } else {
             printf("unknown command!\n");

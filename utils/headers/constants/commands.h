@@ -7,5 +7,6 @@ static const char* DESTROY_CMD = "destroy";
 static const char* LS_CMD = "ls";
 static const char* CREATE_DIR_CMD = "mkdir";
 static const char* DELETE_OBJ_CMD = "rm";
+static const char* CREATE_FILE_CMD = "touch";
 
 #endif //MINI_FS__COMMANDS_H_

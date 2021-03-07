@@ -11,7 +11,7 @@ set(
         fs/handlers/destroy_fs.c
         fs/handlers/list_dir.c
         fs/handlers/delete_object.c
-)
+        fs/handlers/create_file.c)
 set(MINI_FS_STRUCTURES_SOURCES fs/inode.c fs/superblock.c fs/dir_record.c)
 
 add_subdirectory(utils)
