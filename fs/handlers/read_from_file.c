@@ -40,10 +40,11 @@ void read_from_file(uint16_t file_descr, const char* path, uint32_t size) {
 
     // get start inode_id
     struct inode cur_inode;
+    reset_inode(&cur_inode);
     uint16_t cur_inode_id = dt.inode_id[file_descr];
-    for (uint16_t i = 0; i <= start_layer; ++i) {
+    read_inode(fd, cur_inode_id, &cur_inode);
+    for (uint16_t i = 1; i <= start_layer; ++i) {
         reset_inode(&cur_inode);
-
         read_inode(fd, cur_inode_id, &cur_inode);
 
         cur_inode_id = cur_inode.inode_id;

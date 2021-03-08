@@ -49,14 +49,19 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
     struct inode cur_inode;
     uint16_t cur_inode_id = dt.inode_id[file_descr];
     uint16_t prev_inode_id = 0;
-    for (uint16_t i = 0; i <= start_layer; ++i) {
-        reset_inode(&cur_inode);
 
+    reset_inode(&cur_inode);
+    read_inode(fd, cur_inode_id, &cur_inode);
+    for (uint16_t i = 1; i <= start_layer; ++i) {
+        reset_inode(&cur_inode);
         read_inode(fd, cur_inode_id, &cur_inode);
 
         prev_inode_id = cur_inode_id;
         cur_inode_id = cur_inode.inode_id;
     }
+
+    // read data from file to buffer
+    read_retry(source_fd, buffer, size);
 
     // write recursively
     uint32_t buffer_pos = 0;
