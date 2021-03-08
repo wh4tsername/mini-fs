@@ -85,5 +85,8 @@ void create_file(const char* path) {
                     (char*)&record,
                     DIR_RECORD_SIZE);
 
+    // write superblock
+    write_to_superblock(fd, &sb);
+
     close(fd);
 }
