@@ -110,19 +110,15 @@ int main() {
                 continue;
             }
 
-            char pos[BUFFER_LENGTH];
-            parse_token(args, pos);
+            char pos_str[BUFFER_LENGTH];
+            parse_token(args, pos_str);
 
-            bool pos_is_start;
-            if (strcmp(pos, "start") == 0) {
-                pos_is_start = true;
-            } else if (strcmp(pos, "end") == 0) {
-                pos_is_start = false;
-            } else {
-                panic("unknow seek parameter");
+            uint32_t pos = strtol(pos_str, NULL, 10);
+            if (errno == ERANGE) {
+                panic("incorrect position in file");
             }
 
-            seek_pos(file_descr, pos_is_start);
+            seek_pos(file_descr, pos);
         } else if (strcmp(cmd, WRITE_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {

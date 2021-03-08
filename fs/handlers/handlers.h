@@ -25,7 +25,7 @@ void open_file(const char* path);
 
 void close_file(uint16_t file_descr);
 
-void seek_pos(uint16_t file_descr, bool pos_is_start);
+void seek_pos(uint16_t file_descr, uint32_t pos);
 
 void write_to_file(uint16_t file_descr, const char* path, uint32_t size);
 
