@@ -8,6 +8,7 @@
 #include "../../fs/dir_record.h"
 #include "../../fs/inode.h"
 #include "../../fs/superblock.h"
+#include "../../fs/descriptor_table.h"
 
 int write_retry(int fd, const char* buffer, int buffer_size);
 
@@ -17,7 +18,11 @@ void write_to_superblock(int fd, const struct superblock* sb);
 
 void read_from_superblock(int fd, struct superblock* sb);
 
-void write_to_inode(int fd,
+void write_to_descriptor_table(int fd, struct descriptor_table* dt);
+
+void read_from_descriptor_table(int fd, struct descriptor_table* dt);
+
+    void write_to_inode(int fd,
                     uint16_t inode_id,
                     const struct inode* inode);
 

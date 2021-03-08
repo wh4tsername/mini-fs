@@ -55,7 +55,7 @@ void create_file(const char* path) {
             &prev_inode,
             prev_inode.block_ids[0],
             file_name),
-        "directory with such name already exists"
+        "file with such name already exists"
     );
 
     // create inode and block for new file

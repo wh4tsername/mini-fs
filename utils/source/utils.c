@@ -55,6 +55,20 @@ void read_from_superblock(int fd, struct superblock* sb) {
                              "error while reading from file");
 }
 
+void write_to_descriptor_table(int fd, struct descriptor_table* dt) {
+    lseek(fd, SUPERBLOCK_SIZE, SEEK_SET);
+    conditional_handle_error(
+        write_retry(fd, (const char*)dt, DESCRIPTOR_TABLE_SIZE) == -1,
+        "error while writing to file");
+}
+
+void read_from_descriptor_table(int fd, struct descriptor_table* dt) {
+    lseek(fd, SUPERBLOCK_SIZE, SEEK_SET);
+    conditional_handle_error(
+        read_retry(fd, (char*)dt, DESCRIPTOR_TABLE_SIZE) == -1,
+        "error while reading from file");
+}
+
 void write_to_inode(int fd,
                     uint16_t inode_id,
                     const struct inode* inode) {

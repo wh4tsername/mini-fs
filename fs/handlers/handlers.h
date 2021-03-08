@@ -19,4 +19,8 @@ void delete_object(const char* path);
 
 void create_file(const char* path);
 
+void open_file(const char* path);
+
+void close_file(const char* descr_str);
+
 #endif //MINI_FS__HANDLERS_H_

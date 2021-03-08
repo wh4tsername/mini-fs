@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 
-#define DESCRIPTOR_TABLE_SIZE 1024
 #define BLOCK_SIZE 1024
 
 // < uint16_t

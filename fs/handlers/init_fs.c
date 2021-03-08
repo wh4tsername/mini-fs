@@ -16,6 +16,12 @@ void make_partition(int fd) {
 
     // write superblock
     write_to_superblock(fd, &sb);
+
+    // create and write descriptor table
+    struct descriptor_table dt;
+    reset_descriptor_table(&dt);
+
+    write_to_descriptor_table(fd, &dt);
 }
 
 void init_fs() {
