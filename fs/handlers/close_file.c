@@ -13,13 +13,13 @@ void close_file(uint16_t file_descr) {
     struct descriptor_table dt;
     reset_descriptor_table(&dt);
 
-    read_from_descriptor_table(fd, &dt);
+    read_descriptor_table(fd, &dt);
 
     // free file descriptor
     free_descriptor(&dt, file_descr);
 
     // write descriptor table
-    write_to_descriptor_table(fd, &dt);
+    write_descriptor_table(fd, &dt);
 
     close(fd);
 }

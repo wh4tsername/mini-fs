@@ -33,7 +33,7 @@ uint16_t occupy_descriptor(
 
 void free_descriptor(struct  descriptor_table* dt, uint16_t descr) {
     conditional_handle_error(dt->fd_mask[descr] == false,
-                             "trying to double free file descriptor");
+                             "trying to double close file descriptor");
 
     dt->fd_mask[descr] = false;
     dt->inode_id[descr] = 0;
@@ -44,7 +44,7 @@ void change_pos(struct descriptor_table* dt,
                 uint16_t descr,
                 uint32_t pos) {
     conditional_handle_error(dt->fd_mask[descr] == false,
-                             "trying to operate with free file descriptor");
+                             "trying to operate with closed file descriptor");
 
     dt->pos[descr] = pos;
 }

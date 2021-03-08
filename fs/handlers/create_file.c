@@ -32,7 +32,7 @@ void create_file(const char* path) {
     // get superblock
     struct superblock sb;
     reset_superblock(&sb);
-    read_from_superblock(fd, &sb);
+    read_superblock(fd, &sb);
 
     // get inode of prev dir
     struct inode prev_inode;
@@ -42,11 +42,11 @@ void create_file(const char* path) {
     // get block of prev dir
     struct dir_record record;
     reset_dir_record(&record);
-    read_from_block(fd,
-                    prev_inode.block_ids[0],
-                    0,
-                    (char*)&record,
-                    DIR_RECORD_SIZE);
+    read_block(fd,
+               prev_inode.block_ids[0],
+               0,
+               (char *) &record,
+               DIR_RECORD_SIZE);
     uint16_t prev_inode_id = record.inode_id;
 
     conditional_handle_error(
@@ -67,11 +67,11 @@ void create_file(const char* path) {
     inode.is_file = true;
     inode.block_ids[0] = block_id;
 
-    write_to_inode(fd, inode_id, &inode);
+    write_inode(fd, inode_id, &inode);
 
     // update info of directory
     prev_inode.size += 1;
-    write_to_inode(fd, prev_inode_id, &prev_inode);
+    write_inode(fd, prev_inode_id, &prev_inode);
 
     // add new file to records
     reset_dir_record(&record);
@@ -79,14 +79,14 @@ void create_file(const char* path) {
     record.inode_id = inode_id;
     strcpy(record.name, file_name);
 
-    write_to_block(fd,
-                   prev_inode.block_ids[0],
-                   (prev_inode.size - 1) * DIR_RECORD_SIZE,
-                    (char*)&record,
-                    DIR_RECORD_SIZE);
+    write_block(fd,
+                prev_inode.block_ids[0],
+                (prev_inode.size - 1) * DIR_RECORD_SIZE,
+                (char *) &record,
+                DIR_RECORD_SIZE);
 
     // write superblock
-    write_to_superblock(fd, &sb);
+    write_superblock(fd, &sb);
 
     close(fd);
 }

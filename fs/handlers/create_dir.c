@@ -35,7 +35,7 @@ void create_dir(const char* path) {
     // get superblock
     struct superblock sb;
     reset_superblock(&sb);
-    read_from_superblock(fd, &sb);
+    read_superblock(fd, &sb);
 
     // get inode of prev dir
     struct inode inode;
@@ -45,11 +45,11 @@ void create_dir(const char* path) {
     // get block of prev dir
     struct dir_record record;
     reset_dir_record(&record);
-    read_from_block(fd,
-                    inode.block_ids[0],
-                    0,
-                    (char*)&record,
-                    DIR_RECORD_SIZE);
+    read_block(fd,
+               inode.block_ids[0],
+               0,
+               (char *) &record,
+               DIR_RECORD_SIZE);
     uint16_t inode_id = record.inode_id;
 
     conditional_handle_error(
@@ -70,19 +70,19 @@ void create_dir(const char* path) {
     // inode of prev dir info update
     conditional_handle_error(inode.size >= 16, "directory overflow");
     inode.size += 1;
-    write_to_inode(fd,
-                   inode_id,
-                   &inode);
+    write_inode(fd,
+                inode_id,
+                &inode);
 
     // make new dir_record
-    write_to_block(fd,
-                   inode.block_ids[0],
-                   (inode.size - 1) * DIR_RECORD_SIZE,
-                   (const char *)&record,
-                   DIR_RECORD_SIZE);
+    write_block(fd,
+                inode.block_ids[0],
+                (inode.size - 1) * DIR_RECORD_SIZE,
+                (const char *) &record,
+                DIR_RECORD_SIZE);
 
     // write superblock
-    write_to_superblock(fd, &sb);
+    write_superblock(fd, &sb);
 
     close(fd);
 }

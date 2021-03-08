@@ -30,7 +30,7 @@ uint16_t create_dir_block_and_inode(int fd,
     strcpy(records[1].name,"..");
 
     write_dir_records(fd, block_id, records, inode.size);
-    write_to_inode(fd, inode_id, &inode);
+    write_inode(fd, inode_id, &inode);
 
     return inode_id;
 }
@@ -66,7 +66,7 @@ void traverse_recursively(int fd,
         conditional_handle_error(!dir_found, "directory doesn't exist");
 
         struct inode next;
-        read_from_inode(fd, records[i].inode_id, &next);
+        read_inode(fd, records[i].inode_id, &next);
 
         conditional_handle_error(next.is_file,
                                  "trying to enter file");
@@ -82,7 +82,7 @@ void traverse_recursively(int fd,
 void traverse_path(int fd, const char* path, struct inode* res) {
     // inode of "/" = 1
     struct inode cur_inode;
-    read_from_inode(fd, 1, &cur_inode);
+    read_inode(fd, 1, &cur_inode);
 
     traverse_recursively(fd, path, &cur_inode, res);
 }

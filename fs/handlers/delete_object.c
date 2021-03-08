@@ -43,7 +43,7 @@ void delete_file(int fd,
     if (inode->inode_id != 0) {
         struct inode next_inode;
         reset_inode(&next_inode);
-        read_from_inode(fd, inode->inode_id, &next_inode);
+        read_inode(fd, inode->inode_id, &next_inode);
 
         delete_file(fd, sb, &next_inode, inode->inode_id);
     }
@@ -68,7 +68,7 @@ void delete_directory(int fd,
         struct inode child_inode;
         reset_inode(&child_inode);
 
-        read_from_inode(fd, records[i].inode_id, &child_inode);
+        read_inode(fd, records[i].inode_id, &child_inode);
 
         if (child_inode.is_file) {
             delete_file(fd, sb, &child_inode, records[i].inode_id);
@@ -101,7 +101,7 @@ void delete_object(const char* path) {
     // get superblock
     struct superblock sb;
     reset_superblock(&sb);
-    read_from_superblock(fd, &sb);
+    read_superblock(fd, &sb);
 
     // get inode of prev dir
     struct inode prev_inode;
@@ -121,7 +121,7 @@ void delete_object(const char* path) {
     );
     struct inode obj_inode;
     reset_inode(&obj_inode);
-    read_from_inode(fd, inode_id, &obj_inode);
+    read_inode(fd, inode_id, &obj_inode);
 
     // delete obj
     if (obj_inode.is_file) {
@@ -154,10 +154,10 @@ void delete_object(const char* path) {
     uint16_t prev_inode_id = new_records[0].inode_id;
 
     erase_inode(fd, prev_inode_id);
-    write_to_inode(fd, prev_inode_id, &prev_inode);
+    write_inode(fd, prev_inode_id, &prev_inode);
 
     // update superblock
-    write_to_superblock(fd, &sb);
+    write_superblock(fd, &sb);
 
     close(fd);
 }

@@ -39,11 +39,11 @@ void open_file(const char* path) {
     // get block of prev dir
     struct dir_record record;
     reset_dir_record(&record);
-    read_from_block(fd,
-                    prev_inode.block_ids[0],
-                    0,
-                    (char*)&record,
-                    DIR_RECORD_SIZE);
+    read_block(fd,
+               prev_inode.block_ids[0],
+               0,
+               (char *) &record,
+               DIR_RECORD_SIZE);
     uint16_t prev_inode_id = record.inode_id;
 
     // get inode_id of file
@@ -59,7 +59,7 @@ void open_file(const char* path) {
     );
     struct inode file_inode;
     reset_inode(&file_inode);
-    read_from_inode(fd, inode_id, &file_inode);
+    read_inode(fd, inode_id, &file_inode);
 
     conditional_handle_error(!file_inode.is_file,
                              "can open only files");
@@ -68,14 +68,14 @@ void open_file(const char* path) {
     struct descriptor_table dt;
     reset_descriptor_table(&dt);
 
-    read_from_descriptor_table(fd, &dt);
+    read_descriptor_table(fd, &dt);
 
     // occupy file descriptor
     uint16_t descr = occupy_descriptor(&dt, inode_id);
     printf("fd: %hu\n", descr);
 
     // write descriptor table
-    write_to_descriptor_table(fd, &dt);
+    write_descriptor_table(fd, &dt);
 
     close(fd);
 }

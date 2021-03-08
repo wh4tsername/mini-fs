@@ -15,13 +15,13 @@ void make_partition(int fd) {
     create_dir_block_and_inode(fd, &sb, true, 0);
 
     // write superblock
-    write_to_superblock(fd, &sb);
+    write_superblock(fd, &sb);
 
     // create and write descriptor table
     struct descriptor_table dt;
     reset_descriptor_table(&dt);
 
-    write_to_descriptor_table(fd, &dt);
+    write_descriptor_table(fd, &dt);
 }
 
 void init_fs() {

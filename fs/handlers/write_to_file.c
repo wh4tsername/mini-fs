@@ -17,13 +17,13 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
     // get superblock
     struct superblock sb;
     reset_superblock(&sb);
-    read_from_superblock(fd, &sb);
+    read_superblock(fd, &sb);
 
     // get descriptor table
     struct descriptor_table dt;
     reset_descriptor_table(&dt);
 
-    read_from_descriptor_table(fd, &dt);
+    read_descriptor_table(fd, &dt);
 
     conditional_handle_error(!dt.fd_mask[file_descr],
                              "trying to write to closed file descriptor");
@@ -53,7 +53,7 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
     for (uint16_t i = 1; i <= start_layer; ++i) {
         reset_inode(&cur_inode);
 
-        read_from_inode(fd, cur_inode_id, &cur_inode);
+        read_inode(fd, cur_inode_id, &cur_inode);
 
         prev_inode_id = cur_inode_id;
         cur_inode_id = cur_inode.inode_id;
@@ -78,15 +78,15 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
             cur_inode_id = new_inode_id;
 
             // update prev
-            write_to_inode(fd, prev_inode_id, &cur_inode);
+            write_inode(fd, prev_inode_id, &cur_inode);
 
             // write new inode
-            write_to_inode(fd, new_inode_id, &new_inode);
+            write_inode(fd, new_inode_id, &new_inode);
         }
 
         // get inode
         reset_inode(&cur_inode);
-        read_from_inode(fd, cur_inode_id, &cur_inode);
+        read_inode(fd, cur_inode_id, &cur_inode);
 
         uint16_t left_block = 0;
         uint16_t right_block = 0;
@@ -129,11 +129,11 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
                 right_block_shift = BLOCK_SIZE;
             }
 
-            write_to_block(fd,
-                           cur_inode.block_ids[j],
-                           left_block_shift,
-                           buffer + buffer_pos,
-                           right_block_shift - left_block_shift);
+            write_block(fd,
+                        cur_inode.block_ids[j],
+                        left_block_shift,
+                        buffer + buffer_pos,
+                        right_block_shift - left_block_shift);
 
             buffer_pos += right_block_shift - left_block_shift;
         }
@@ -143,7 +143,7 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
                                  "size error while writing");
 
         // update cur inode
-        write_to_inode(fd, cur_inode_id, &cur_inode);
+        write_inode(fd, cur_inode_id, &cur_inode);
 
         // get next inode
         prev_inode_id = cur_inode_id;
@@ -154,10 +154,10 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
     dt.pos[file_descr] += size;
 
     // write descriptor table
-    write_to_descriptor_table(fd, &dt);
+    write_descriptor_table(fd, &dt);
 
     // write superblock
-    write_to_superblock(fd, &sb);
+    write_superblock(fd, &sb);
 
     free(buffer);
 

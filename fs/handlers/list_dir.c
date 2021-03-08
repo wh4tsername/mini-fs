@@ -23,7 +23,7 @@ void list_dir(const char* path) {
 
         struct inode obj_inode;
         reset_inode(&obj_inode);
-        read_from_inode(fd, records[i].inode_id, &obj_inode);
+        read_inode(fd, records[i].inode_id, &obj_inode);
 
         if (obj_inode.is_file) {
             printf(" - file");
