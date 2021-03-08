@@ -137,7 +137,7 @@ void read_block(int fd,
 
     conditional_handle_error(block_id > NUM_BLOCKS,
                              "incorrect block_id");
-    conditional_handle_error(inblock_offset + buffer_size >= BLOCK_SIZE,
+    conditional_handle_error(inblock_offset + buffer_size > BLOCK_SIZE,
                              "read from block out of bounds");
 
     lseek(fd, offset, SEEK_SET);

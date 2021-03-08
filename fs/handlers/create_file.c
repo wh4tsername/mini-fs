@@ -9,7 +9,7 @@ bool check_for_duplicate_file(int fd,
                               struct inode* inode,
                               uint16_t block_id,
                               const char* name) {
-    struct dir_record records[16];
+    struct dir_record records[NUM_RECORDS_IN_DIR];
     read_dir_records(fd, block_id, records, inode->size);
 
     for (uint16_t i = 0; i < inode->size; ++i) {

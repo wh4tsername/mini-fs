@@ -11,7 +11,7 @@ bool check_if_obj_exists(int fd,
                          uint16_t block_id,
                          const char* name,
                          uint16_t* res_inode_id) {
-    struct dir_record records[16];
+    struct dir_record records[NUM_RECORDS_IN_DIR];
     read_dir_records(fd, block_id, records, inode->size);
 
     for (uint16_t i = 0; i < inode->size; ++i) {
