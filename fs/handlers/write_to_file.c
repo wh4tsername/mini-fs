@@ -22,13 +22,12 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
     // get descriptor table
     struct descriptor_table dt;
     reset_descriptor_table(&dt);
-
     read_descriptor_table(fd, &dt);
 
     conditional_handle_error(!dt.fd_mask[file_descr],
                              "trying to write to closed file descriptor");
 
-    // calculate cur offsets
+    // calculate start offsets
     uint16_t start_layer =
         dt.pos[file_descr] / (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
     uint16_t start_layer_shift =
@@ -50,7 +49,7 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
     struct inode cur_inode;
     uint16_t cur_inode_id = dt.inode_id[file_descr];
     uint16_t prev_inode_id = 0;
-    for (uint16_t i = 1; i <= start_layer; ++i) {
+    for (uint16_t i = 0; i <= start_layer; ++i) {
         reset_inode(&cur_inode);
 
         read_inode(fd, cur_inode_id, &cur_inode);
@@ -88,6 +87,7 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
         reset_inode(&cur_inode);
         read_inode(fd, cur_inode_id, &cur_inode);
 
+        // includes right bound
         uint16_t left_block = 0;
         uint16_t right_block = 0;
         if (fin_layer == start_layer) {
@@ -113,6 +113,7 @@ void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
                 cur_inode.block_ids[j] = new_block_id;
             }
 
+            // doesn't include right bound
             uint16_t left_block_shift = 0;
             uint16_t right_block_shift = 0;
             if (left_block == right_block) {
