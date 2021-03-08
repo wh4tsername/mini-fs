@@ -1,14 +1,15 @@
 #ifndef MINI_FS__COMMANDS_H_
 #define MINI_FS__COMMANDS_H_
 
-static const char* QUIT_CMD = "quit";
-static const char* INIT_CMD = "init";
-static const char* DESTROY_CMD = "destroy";
-static const char* LS_CMD = "ls";
-static const char* CREATE_DIR_CMD = "mkdir";
-static const char* DELETE_OBJ_CMD = "rm";
-static const char* CREATE_FILE_CMD = "touch";
-static const char* OPEN_FILE_CMD = "open";
-static const char* CLOSE_FILE_CMD = "close";
+#define QUIT_CMD "quit"
+#define INIT_CMD "init"
+#define DESTROY_CMD "destroy"
+#define LS_CMD "ls"
+#define CREATE_DIR_CMD "mkdir"
+#define DELETE_OBJ_CMD "rm"
+#define CREATE_FILE_CMD "touch"
+#define OPEN_FILE_CMD "open"
+#define CLOSE_FILE_CMD "close"
+#define SEEK_CMD "seek"
 
 #endif //MINI_FS__COMMANDS_H_

@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h>
 
 void init_fs();
 
@@ -22,5 +23,7 @@ void create_file(const char* path);
 void open_file(const char* path);
 
 void close_file(const char* descr_str);
+
+void seek_pos(const char* descr_str, bool pos_is_start);
 
 #endif //MINI_FS__HANDLERS_H_

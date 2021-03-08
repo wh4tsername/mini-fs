@@ -39,3 +39,12 @@ void free_descriptor(struct  descriptor_table* dt, uint16_t descr) {
     dt->inode_id[descr] = 0;
     dt->pos[descr] = 0;
 }
+
+void change_pos(struct descriptor_table* dt,
+                uint16_t descr,
+                uint32_t pos) {
+    conditional_handle_error(dt->fd_mask[descr] == false,
+                             "trying to operate with free file descriptor");
+
+    dt->pos[descr] = pos;
+}

@@ -7,7 +7,7 @@
 
 int main() {
     const int BUFFER_LENGTH = 256;
-    char* buffer = malloc(BUFFER_LENGTH);
+    char buffer[BUFFER_LENGTH];
 
     while (read_command(buffer, BUFFER_LENGTH)) {
         char cmd[BUFFER_LENGTH];
@@ -83,13 +83,40 @@ int main() {
             parse_token(args, descr_str);
 
             close_file(descr_str);
+        } else if (strcmp(cmd, SEEK_CMD) == 0) {
+            // no arg check
+            if (args == NULL || strlen(args) == 0) {
+                printf("seek command requires file descriptor and pos args!\n");
+                continue;
+            }
+
+            char descr_str[BUFFER_LENGTH];
+            args = parse_token(args, descr_str);
+
+            // one arg check
+            if (args == NULL || strlen(args) == 0) {
+                printf("seek command requires file descriptor and pos args!\n");
+                continue;
+            }
+
+            char pos[BUFFER_LENGTH];
+            parse_token(args, pos);
+
+            bool pos_is_start;
+            if (strcmp(pos, "start") == 0) {
+                pos_is_start = true;
+            } else if (strcmp(pos, "end") == 0) {
+                pos_is_start = false;
+            } else {
+                panic("unknow seek parameter");
+            }
+
+            seek_pos(descr_str, pos_is_start);
         } else if (strlen(cmd) == 0) {
         } else {
             printf("unknown command!\n");
         }
     }
-
-    free(buffer);
 
     return 0;
 }

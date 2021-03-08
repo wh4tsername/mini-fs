@@ -20,4 +20,8 @@ uint16_t occupy_descriptor(
 
 void free_descriptor(struct  descriptor_table* dt, uint16_t descr);
 
+void change_pos(struct descriptor_table* dt,
+                uint16_t descr,
+                uint32_t pos);
+
 #endif //MINI_FS_FS_DESCRIPTOR_TABLE_H_
