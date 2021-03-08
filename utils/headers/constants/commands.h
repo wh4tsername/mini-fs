@@ -11,5 +11,7 @@
 #define OPEN_FILE_CMD "open"
 #define CLOSE_FILE_CMD "close"
 #define SEEK_CMD "seek"
+#define WRITE_CMD "write"
+#define READ_CMD "read"
 
 #endif //MINI_FS__COMMANDS_H_

@@ -5,7 +5,7 @@
 #include <helpers.h>
 #include <utils.h>
 
-void seek_pos(const char* descr_str, bool pos_is_start) {
+void seek_pos(uint16_t file_descr, bool pos_is_start) {
     int fd = open(FS_FILENAME, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
@@ -14,11 +14,6 @@ void seek_pos(const char* descr_str, bool pos_is_start) {
     reset_descriptor_table(&dt);
 
     read_from_descriptor_table(fd, &dt);
-
-    uint16_t file_descr = strtol(descr_str, NULL, 10);
-    if (errno == ERANGE) {
-        panic("incorrect file descriptor");
-    }
 
     // get offset
     struct inode inode;

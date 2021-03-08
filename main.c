@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "client/client.h"
 #include "fs/handlers/handlers.h"
@@ -82,7 +83,12 @@ int main() {
             char descr_str[BUFFER_LENGTH];
             parse_token(args, descr_str);
 
-            close_file(descr_str);
+            uint16_t file_descr = strtol(descr_str, NULL, 10);
+            if (errno == ERANGE) {
+                panic("incorrect file descriptor");
+            }
+
+            close_file(file_descr);
         } else if (strcmp(cmd, SEEK_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -92,6 +98,11 @@ int main() {
 
             char descr_str[BUFFER_LENGTH];
             args = parse_token(args, descr_str);
+
+            uint16_t file_descr = strtol(descr_str, NULL, 10);
+            if (errno == ERANGE) {
+                panic("incorrect file descriptor");
+            }
 
             // one arg check
             if (args == NULL || strlen(args) == 0) {
@@ -111,7 +122,51 @@ int main() {
                 panic("unknow seek parameter");
             }
 
-            seek_pos(descr_str, pos_is_start);
+            seek_pos(file_descr, pos_is_start);
+        } else if (strcmp(cmd, WRITE_CMD) == 0) {
+            // no arg check
+            if (args == NULL || strlen(args) == 0) {
+                printf("write command requires file descriptor, "
+                       "source file path and size args!\n");
+                continue;
+            }
+
+            char descr_str[BUFFER_LENGTH];
+            args = parse_token(args, descr_str);
+
+            uint16_t file_descr = strtol(descr_str, NULL, 10);
+            if (errno == ERANGE) {
+                panic("incorrect file descriptor");
+            }
+
+            // one arg check
+            if (args == NULL || strlen(args) == 0) {
+                printf("write command requires file descriptor, "
+                       "source file path and size args!\n");
+                continue;
+            }
+
+            char path[BUFFER_LENGTH];
+            args = parse_token(args, path);
+
+            // two arg check
+            if (args == NULL || strlen(args) == 0) {
+                printf("write command requires file descriptor, "
+                       "source file path and size args!\n");
+                continue;
+            }
+
+            char size_str[BUFFER_LENGTH];
+            parse_token(args, size_str);
+
+            uint16_t size = strtol(size_str, NULL, 10);
+            if (errno == ERANGE) {
+                panic("incorrect file descriptor");
+            }
+
+            write_to_file(file_descr, path, size);
+        } else if (strcmp(cmd, READ_CMD) == 0) {
+
         } else if (strlen(cmd) == 0) {
         } else {
             printf("unknown command!\n");

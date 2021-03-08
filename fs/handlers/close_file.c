@@ -5,7 +5,7 @@
 #include <helpers.h>
 #include <utils.h>
 
-void close_file(const char* descr_str) {
+void close_file(uint16_t file_descr) {
     int fd = open(FS_FILENAME, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
@@ -14,11 +14,6 @@ void close_file(const char* descr_str) {
     reset_descriptor_table(&dt);
 
     read_from_descriptor_table(fd, &dt);
-
-    uint16_t file_descr = strtol(descr_str, NULL, 10);
-    if (errno == ERANGE) {
-        panic("incorrect file descriptor");
-    }
 
     // free file descriptor
     free_descriptor(&dt, file_descr);

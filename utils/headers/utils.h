@@ -22,7 +22,7 @@ void write_to_descriptor_table(int fd, struct descriptor_table* dt);
 
 void read_from_descriptor_table(int fd, struct descriptor_table* dt);
 
-    void write_to_inode(int fd,
+void write_to_inode(int fd,
                     uint16_t inode_id,
                     const struct inode* inode);
 
