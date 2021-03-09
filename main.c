@@ -6,7 +6,13 @@
 #include "fs/handlers/handlers.h"
 #include <defines.h>
 
-int main() {
+int main(int argc, char** argv) {
+    if (argc != 2) {
+        panic("file system storage file should be specified as an argument");
+    }
+
+    const char* fs_path = argv[1];
+
     const int BUFFER_LENGTH = 256;
     char buffer[BUFFER_LENGTH];
 
@@ -15,9 +21,9 @@ int main() {
         char* args = parse_token(buffer, cmd);
 
         if (strcmp(cmd, INIT_CMD) == 0) {
-            init_fs();
+            init_fs(fs_path);
         } else if (strcmp(cmd, DESTROY_CMD) == 0) {
-            destroy_fs();
+            destroy_fs(fs_path);
         } else if (strcmp(cmd, LS_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -28,7 +34,7 @@ int main() {
             char path[BUFFER_LENGTH];
             parse_token(args, path);
 
-            list_dir(path);
+            list_dir(fs_path, path);
         } else if (strcmp(cmd, CREATE_DIR_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -39,7 +45,7 @@ int main() {
             char path[BUFFER_LENGTH];
             parse_token(args, path);
 
-            create_dir(path);
+            create_dir(fs_path, path);
         } else if (strcmp(cmd, DELETE_OBJ_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -50,7 +56,7 @@ int main() {
             char path[BUFFER_LENGTH];
             parse_token(args, path);
 
-            delete_object(path);
+            delete_object(fs_path, path);
         } else if (strcmp(cmd, CREATE_FILE_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -61,7 +67,7 @@ int main() {
             char path[BUFFER_LENGTH];
             parse_token(args, path);
 
-            create_file(path);
+            create_file(fs_path, path);
         } else if (strcmp(cmd, OPEN_FILE_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -72,7 +78,7 @@ int main() {
             char path[BUFFER_LENGTH];
             parse_token(args, path);
 
-            open_file(path);
+            open_file(fs_path, path);
         } else if (strcmp(cmd, CLOSE_FILE_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -88,7 +94,7 @@ int main() {
                 panic("incorrect file descriptor");
             }
 
-            close_file(file_descr);
+            close_file(fs_path, file_descr);
         } else if (strcmp(cmd, SEEK_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -118,7 +124,7 @@ int main() {
                 panic("incorrect position in file");
             }
 
-            seek_pos(file_descr, pos);
+            seek_pos(fs_path, file_descr, pos);
         } else if (strcmp(cmd, WRITE_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -160,7 +166,7 @@ int main() {
                 panic("incorrect file descriptor");
             }
 
-            write_to_file(file_descr, path, size);
+            write_to_file(fs_path, file_descr, path, size);
         } else if (strcmp(cmd, READ_CMD) == 0) {
             // no arg check
             if (args == NULL || strlen(args) == 0) {
@@ -202,7 +208,7 @@ int main() {
                 panic("incorrect file descriptor");
             }
 
-            read_from_file(file_descr, path, size);
+            read_from_file(fs_path, file_descr, path, size);
         } else if (strlen(cmd) == 0) {
         } else {
             printf("unknown command!\n");

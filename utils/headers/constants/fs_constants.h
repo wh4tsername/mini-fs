@@ -3,7 +3,6 @@
 
 #include <constants/struct_sizes.h>
 
-#define FS_FILENAME "../fs.bin"
 #define FS_SIZE                  \
     (SUPERBLOCK_SIZE +           \
     DESCRIPTOR_TABLE_SIZE +      \

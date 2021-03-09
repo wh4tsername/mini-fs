@@ -24,8 +24,8 @@ void make_partition(int fd) {
     write_descriptor_table(fd, &dt);
 }
 
-void init_fs() {
-    int fd = open(FS_FILENAME, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+void init_fs(const char* fs_path) {
+    int fd = open(fs_path, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
     ftruncate(fd, FS_SIZE);

@@ -23,8 +23,8 @@ bool check_for_file(int fd,
     return false;
 }
 
-void open_file(const char* path) {
-    int fd = open(FS_FILENAME, O_RDWR, S_IRUSR | S_IWUSR);
+void open_file(const char* fs_path, const char* path) {
+    int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
     char path_to_traverse[256];

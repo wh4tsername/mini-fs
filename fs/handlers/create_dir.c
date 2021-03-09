@@ -21,8 +21,8 @@ bool check_for_duplicate_dir(int fd,
     return false;
 }
 
-void create_dir(const char* path) {
-    int fd = open(FS_FILENAME, O_RDWR, S_IRUSR | S_IWUSR);
+void create_dir(const char* fs_path, const char* path) {
+    int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
     char path_to_traverse[256];

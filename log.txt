@@ -1,0 +1,4 @@
+destroy
+init
+ls /
+quit

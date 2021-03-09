@@ -6,8 +6,8 @@
 
 #include <stdlib.h>
 
-void list_dir(const char* path) {
-    int fd = open(FS_FILENAME, O_RDWR, S_IRUSR | S_IWUSR);
+void list_dir(const char* fs_path, const char* path) {
+    int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
     struct inode inode;

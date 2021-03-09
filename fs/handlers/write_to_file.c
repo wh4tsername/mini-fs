@@ -5,8 +5,8 @@
 #include <helpers.h>
 #include <utils.h>
 
-void write_to_file(uint16_t file_descr, const char* path, uint32_t size) {
-    int fd = open(FS_FILENAME, O_RDWR, S_IRUSR | S_IWUSR);
+void write_to_file(const char* fs_path, uint16_t file_descr, const char* path, uint32_t size) {
+    int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
     char* buffer = malloc(size);
