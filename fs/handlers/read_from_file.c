@@ -5,7 +5,10 @@
 #include <helpers.h>
 #include <utils.h>
 
-void read_from_file(const char* fs_path, uint16_t file_descr, const char* path, uint32_t size) {
+void read_from_file(const char* fs_path,
+                    uint16_t file_descr,
+                    const char* path,
+                    uint32_t size) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
@@ -84,17 +87,15 @@ void read_from_file(const char* fs_path, uint16_t file_descr, const char* path, 
             // doesn't include right bound
             uint16_t left_block_shift = 0;
             uint16_t right_block_shift = 0;
-            if (left_block == right_block) {
+            if (j == start_block_num && i == 0) {
                 left_block_shift = start_block_shift;
-                right_block_shift = fin_block_shift;
-            } else if (j == left_block) {
-                left_block_shift = start_block_shift;
-                right_block_shift = BLOCK_SIZE;
-            } else if (j == right_block) {
-                left_block_shift = 0;
-                right_block_shift = fin_block_shift;
             } else {
                 left_block_shift = 0;
+            }
+
+            if (j == fin_block_num && i == fin_layer - start_layer) {
+                right_block_shift = fin_block_shift;
+            } else {
                 right_block_shift = BLOCK_SIZE;
             }
 

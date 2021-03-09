@@ -1,4 +1,34 @@
 destroy
 init
-ls /
+touch /file
+open /file
+write 0 /home/wasd/github/mini-fs/std.in 83
+write 0 /home/wasd/github/mini-fs/std.in 2
+write 0 /home/wasd/github/mini-fs/std.in 6
+write 0 /home/wasd/github/mini-fs/std.in 21
+write 0 /home/wasd/github/mini-fs/std.in 62
+write 0 /home/wasd/github/mini-fs/std.in 86
+write 0 /home/wasd/github/mini-fs/std.in 81
+write 0 /home/wasd/github/mini-fs/std.in 2
+write 0 /home/wasd/github/mini-fs/std.in 80
+write 0 /home/wasd/github/mini-fs/std.in 27
+write 0 /home/wasd/github/mini-fs/std.in 47
+write 0 /home/wasd/github/mini-fs/std.in 3
+seek 0 0
+read 0 /home/wasd/github/mini-fs/std.out 21
+read 0 /home/wasd/github/mini-fs/std.out 0
+read 0 /home/wasd/github/mini-fs/std.out 24
+read 0 /home/wasd/github/mini-fs/std.out 74
+read 0 /home/wasd/github/mini-fs/std.out 82
+read 0 /home/wasd/github/mini-fs/std.out 89
+read 0 /home/wasd/github/mini-fs/std.out 12
+read 0 /home/wasd/github/mini-fs/std.out 10
+read 0 /home/wasd/github/mini-fs/std.out 0
+read 0 /home/wasd/github/mini-fs/std.out 62
+read 0 /home/wasd/github/mini-fs/std.out 75
+read 0 /home/wasd/github/mini-fs/std.out 43
+read 0 /home/wasd/github/mini-fs/std.out 5
+read 0 /home/wasd/github/mini-fs/std.out 3
+close /file
 quit
+OK

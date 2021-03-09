@@ -45,28 +45,24 @@ int read_retry(const int fd, char* buffer,
 
 void write_superblock(int fd, const struct superblock* sb) {
     lseek(fd, 0, SEEK_SET);
-    conditional_handle_error(write_retry(fd, (const char*)sb, SUPERBLOCK_SIZE) == -1,
-                             "error while writing to file");
+    conditional_parse_errno(write_retry(fd, (const char*)sb, SUPERBLOCK_SIZE) == -1);
 }
 
 void read_superblock(int fd, struct superblock* sb) {
     lseek(fd, 0, SEEK_SET);
-    conditional_handle_error(read_retry(fd, (char*)sb, SUPERBLOCK_SIZE) == -1,
-                             "error while reading from file");
+    conditional_parse_errno(read_retry(fd, (char*)sb, SUPERBLOCK_SIZE) == -1);
 }
 
 void write_descriptor_table(int fd, struct descriptor_table* dt) {
     lseek(fd, SUPERBLOCK_SIZE, SEEK_SET);
-    conditional_handle_error(
-        write_retry(fd, (const char*)dt, DESCRIPTOR_TABLE_SIZE) == -1,
-        "error while writing to file");
+    conditional_parse_errno(
+        write_retry(fd, (const char*)dt, DESCRIPTOR_TABLE_SIZE) == -1);
 }
 
 void read_descriptor_table(int fd, struct descriptor_table* dt) {
     lseek(fd, SUPERBLOCK_SIZE, SEEK_SET);
-    conditional_handle_error(
-        read_retry(fd, (char*)dt, DESCRIPTOR_TABLE_SIZE) == -1,
-        "error while reading from file");
+    conditional_parse_errno(
+        read_retry(fd, (char*)dt, DESCRIPTOR_TABLE_SIZE) == -1);
 }
 
 void write_inode(int fd,
@@ -81,8 +77,7 @@ void write_inode(int fd,
                              "incorrect inode_id");
 
     lseek(fd, offset, SEEK_SET);
-    conditional_handle_error(write_retry(fd, (const char*)inode, INODE_SIZE) == -1,
-                             "error while writing to file");
+    conditional_parse_errno(write_retry(fd, (const char*)inode, INODE_SIZE) == -1);
 }
 
 void read_inode(int fd,
@@ -97,8 +92,7 @@ void read_inode(int fd,
                              "incorrect inode_id");
 
     lseek(fd, offset, SEEK_SET);
-    conditional_handle_error(read_retry(fd, (char*)inode, INODE_SIZE) == -1,
-                             "error while reading from file");
+    conditional_parse_errno(read_retry(fd, (char*)inode, INODE_SIZE) == -1);
 }
 
 void write_block(int fd,
@@ -119,8 +113,7 @@ void write_block(int fd,
                              "write to block out of bounds");
 
     lseek(fd, offset, SEEK_SET);
-    conditional_handle_error(write_retry(fd, buffer, buffer_size) == -1,
-                             "error while writing to file");
+    conditional_parse_errno(write_retry(fd, buffer, buffer_size) == -1);
 }
 
 void read_block(int fd,
@@ -141,8 +134,7 @@ void read_block(int fd,
                              "read from block out of bounds");
 
     lseek(fd, offset, SEEK_SET);
-    conditional_handle_error(read_retry(fd, buffer, buffer_size) == -1,
-                             "error while reading from file");
+    conditional_parse_errno(read_retry(fd, buffer, buffer_size) == -1);
 }
 
 void write_dir_records(int fd,

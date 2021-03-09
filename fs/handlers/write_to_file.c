@@ -5,7 +5,10 @@
 #include <helpers.h>
 #include <utils.h>
 
-void write_to_file(const char* fs_path, uint16_t file_descr, const char* path, uint32_t size) {
+void write_to_file(const char* fs_path,
+                   uint16_t file_descr,
+                   const char* path,
+                   uint32_t size) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
@@ -53,6 +56,10 @@ void write_to_file(const char* fs_path, uint16_t file_descr, const char* path, u
     reset_inode(&cur_inode);
     read_inode(fd, cur_inode_id, &cur_inode);
     for (uint16_t i = 1; i <= start_layer; ++i) {
+        // update prev inode sizes
+        cur_inode.size += size;
+        write_inode(fd, cur_inode_id, &cur_inode);
+
         reset_inode(&cur_inode);
         read_inode(fd, cur_inode_id, &cur_inode);
 
@@ -65,6 +72,8 @@ void write_to_file(const char* fs_path, uint16_t file_descr, const char* path, u
 
     // write recursively
     uint32_t buffer_pos = 0;
+    uint32_t left_size = size;
+    uint32_t cur_written = 0;
     // iterate inodes
     for (uint16_t i = 0; i <= fin_layer - start_layer; ++i) {
         // lazy inode allocation
@@ -121,17 +130,15 @@ void write_to_file(const char* fs_path, uint16_t file_descr, const char* path, u
             // doesn't include right bound
             uint16_t left_block_shift = 0;
             uint16_t right_block_shift = 0;
-            if (left_block == right_block) {
+            if (j == start_block_num && i == 0) {
                 left_block_shift = start_block_shift;
-                right_block_shift = fin_block_shift;
-            } else if (j == left_block) {
-                left_block_shift = start_block_shift;
-                right_block_shift = BLOCK_SIZE;
-            } else if (j == right_block) {
-                left_block_shift = 0;
-                right_block_shift = fin_block_shift;
             } else {
                 left_block_shift = 0;
+            }
+
+            if (j == fin_block_num && i == fin_layer - start_layer) {
+                right_block_shift = fin_block_shift;
+            } else {
                 right_block_shift = BLOCK_SIZE;
             }
 
@@ -142,11 +149,17 @@ void write_to_file(const char* fs_path, uint16_t file_descr, const char* path, u
                         right_block_shift - left_block_shift);
 
             buffer_pos += right_block_shift - left_block_shift;
+            cur_written += right_block_shift - left_block_shift;
         }
 
-        cur_inode.size += size - i * NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE;
-        conditional_handle_error(size < i * NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE,
-                                 "size error while writing");
+        cur_inode.size += left_size;
+
+        conditional_handle_error(
+            left_size < cur_written,
+            "size error while writing");
+
+        left_size -= cur_written;
+        cur_written = 0;
 
         // update cur inode
         write_inode(fd, cur_inode_id, &cur_inode);

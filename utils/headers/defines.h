@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #define panic(msg)              \
     fprintf(stderr, "%s", msg); \
