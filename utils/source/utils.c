@@ -73,7 +73,7 @@ void write_inode(int fd,
         DESCRIPTOR_TABLE_SIZE +
         INODE_SIZE * (inode_id - 1);
 
-    conditional_handle_error(inode_id > NUM_INODES,
+    conditional_handle_error(inode_id > NUM_INODES || inode_id == 0,
                              "incorrect inode_id");
 
     lseek(fd, offset, SEEK_SET);
@@ -88,7 +88,7 @@ void read_inode(int fd,
         DESCRIPTOR_TABLE_SIZE +
         INODE_SIZE * (inode_id - 1);
 
-    conditional_handle_error(inode_id > NUM_INODES,
+    conditional_handle_error(inode_id > NUM_INODES || inode_id == 0,
                              "incorrect inode_id");
 
     lseek(fd, offset, SEEK_SET);
@@ -107,7 +107,7 @@ void write_block(int fd,
         BLOCK_SIZE * (block_id - 1) +
         inblock_offset;
 
-    conditional_handle_error(block_id > NUM_BLOCKS,
+    conditional_handle_error(block_id > NUM_BLOCKS || block_id == 0,
                              "incorrect block_id");
     conditional_handle_error(inblock_offset + buffer_size > BLOCK_SIZE,
                              "write to block out of bounds");
@@ -128,7 +128,7 @@ void read_block(int fd,
         BLOCK_SIZE * (block_id - 1) +
         inblock_offset;
 
-    conditional_handle_error(block_id > NUM_BLOCKS,
+    conditional_handle_error(block_id > NUM_BLOCKS || block_id == 0,
                              "incorrect block_id");
     conditional_handle_error(inblock_offset + buffer_size > BLOCK_SIZE,
                              "read from block out of bounds");

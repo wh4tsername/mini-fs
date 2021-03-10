@@ -10,8 +10,8 @@ second_log_path = "log2.txt"
 stdin_path = "/home/wasd/github/mini-fs/std.in"
 stdout_path = "/home/wasd/github/mini-fs/std.out"
 
-TEST_SIZE = 500
-MAX_WRITE_READ_SIZE = 48 * 2
+TEST_SIZE = 5000
+MAX_WRITE_READ_SIZE = 48 * 3
 FLUSH_WAIT_TIME = 0.5
 
 
@@ -38,7 +38,6 @@ def write_randomly(fd, log2):
         sleep(FLUSH_WAIT_TIME)
 
         send_cmd(fd, "write 0 " + stdin_path + " " + str(ksi))
-
         sleep(FLUSH_WAIT_TIME)
 
         pos += ksi

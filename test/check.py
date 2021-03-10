@@ -6,7 +6,7 @@ Checks if written and read correctly
 stdout_path = "std.out"
 log_path = "log.txt"
 
-TEST_SIZE = 500
+TEST_SIZE = 5000
 
 
 def check(fd):
@@ -18,11 +18,19 @@ def check(fd):
         if buf[i] != chr(ord('0') + (i % 10)):
             log.write("ERROR\n")
             log.write(str(i) + " " + buf[i] + " != " + chr(ord('0') + (i % 10)) + "\n")
+
+            check_seq(log, buf)
             exit(1)
 
     log.write("OK\n")
 
     log.close()
+
+
+def check_seq(log, buf):
+    for i in range(0, TEST_SIZE - 1):
+        if (ord(buf[i]) + 1 != ord(buf[i + 1])) and ((ord(buf[i]) != ord('9')) or (ord(buf[i + 1]) != ord('0'))):
+            log.write(str(i) + " " + buf[i] + " " + buf[i + 1] + "\n")
 
 
 if __name__ == "__main__":

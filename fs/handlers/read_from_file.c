@@ -41,22 +41,35 @@ void read_from_file(const char* fs_path,
     uint16_t fin_block_num = fin_layer_shift / BLOCK_SIZE;
     uint16_t fin_block_shift = fin_layer_shift % BLOCK_SIZE;
 
+//    // get start inode_id
+//    struct inode cur_inode;
+//    reset_inode(&cur_inode);
+//    uint16_t cur_inode_id = dt.inode_id[file_descr];
+//    read_inode(fd, cur_inode_id, &cur_inode);
+//    for (uint16_t i = 1; i <= start_layer; ++i) {
+//        reset_inode(&cur_inode);
+//        read_inode(fd, cur_inode_id, &cur_inode);
+//
+//        cur_inode_id = cur_inode.inode_id;
+//    }
+
     // get start inode_id
     struct inode cur_inode;
-    reset_inode(&cur_inode);
     uint16_t cur_inode_id = dt.inode_id[file_descr];
+
+    reset_inode(&cur_inode);
     read_inode(fd, cur_inode_id, &cur_inode);
     for (uint16_t i = 1; i <= start_layer; ++i) {
+        cur_inode_id = cur_inode.inode_id;
+
         reset_inode(&cur_inode);
         read_inode(fd, cur_inode_id, &cur_inode);
-
-        cur_inode_id = cur_inode.inode_id;
     }
 
-    // check if pos + size in bounds
-    conditional_handle_error(
-        (uint64_t)dt.pos[file_descr] + (uint64_t)size > (uint64_t)cur_inode.size,
-        "read length is out of bounds");
+//    // check if pos + size in bounds
+//    conditional_handle_error(
+//        (uint64_t)dt.pos[file_descr] + (uint64_t)size > (uint64_t)cur_inode.size,
+//        "read length is out of bounds");
 
     // read recursively
     char* buffer = malloc(BLOCK_SIZE);
@@ -68,17 +81,15 @@ void read_from_file(const char* fs_path,
         // includes right bound
         uint16_t left_block = 0;
         uint16_t right_block = 0;
-        if (fin_layer == start_layer) {
+        if (i == 0) {
             left_block = start_block_num;
-            right_block = fin_block_num;
-        } else if (i == 0) {
-            left_block = start_block_num;
-            right_block = NUM_BLOCK_IDS_IN_INODE - 1;
-        } else if (i == fin_layer - start_layer) {
-            left_block = 0;
-            right_block = fin_block_num;
         } else {
             left_block = 0;
+        }
+
+        if (i == fin_layer - start_layer) {
+            right_block = fin_block_num;
+        } else {
             right_block = NUM_BLOCK_IDS_IN_INODE - 1;
         }
 
