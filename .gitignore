@@ -1,2 +1,5 @@
 cmake-build-debug/
 .idea/
+fs.bin
+std.out
+std.in
