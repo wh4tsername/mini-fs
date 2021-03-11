@@ -2,7 +2,6 @@
 #include <utils.h>
 #include <defines.h>
 #include <string_utils.h>
-#include "../../fs/dir_record.h"
 
 #include <string.h>
 
@@ -43,7 +42,7 @@ void traverse_recursively(int fd,
     conditional_handle_error(current->is_file,
                              "trying to enter file");
 
-    char current_layer[256];
+    char current_layer[MAX_PATH_LENGTH];
     char* remaining_path = parse_path(path, current_layer);
 
     if (strcmp(current_layer, "/") == 0) {
@@ -92,7 +91,6 @@ char* parse_path(const char* path, char* next_token) {
     conditional_handle_error(slash_pos == NULL, "incorrect path");
 
     uint16_t path_length = strlen(path);
-//    printf("path length: %hu\n", path_length);
 
     // path = "/"
     if (path_length == 1) {
@@ -110,8 +108,6 @@ char* parse_path(const char* path, char* next_token) {
         conditional_handle_error(next_token_length == 0, "incorrect path");
     }
 
-//    printf("next_token_length: %hu\n", next_token_length);
-
     memcpy(next_token, slash_pos + 1, next_token_length);
     next_token[next_token_length] = '\0';
 
@@ -122,7 +118,7 @@ void split_path(const char* path,
                 char* path_to_traverse,
                 char* dir_name) {
     uint16_t path_length = strlen(path);
-    char buffer[256];
+    char buffer[MAX_PATH_LENGTH];
     delete_last_slash_and_copy_res(path, path_length, buffer);
 
     uint16_t buffer_length = strlen(buffer);

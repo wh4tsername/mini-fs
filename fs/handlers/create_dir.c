@@ -25,8 +25,8 @@ void create_dir(const char* fs_path, const char* path) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
-    char path_to_traverse[256];
-    char dir_name[256];
+    char path_to_traverse[MAX_PATH_LENGTH];
+    char dir_name[MAX_PATH_LENGTH];
     split_path(path, path_to_traverse, dir_name);
 
 //    printf("%s\n", path_to_traverse);

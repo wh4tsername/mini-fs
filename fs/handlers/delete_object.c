@@ -89,8 +89,8 @@ void delete_object(const char* fs_path, const char* path) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
-    char path_to_traverse[256];
-    char obj_name[256];
+    char path_to_traverse[MAX_PATH_LENGTH];
+    char obj_name[MAX_PATH_LENGTH];
     split_path(path, path_to_traverse, obj_name);
 
     conditional_handle_error(

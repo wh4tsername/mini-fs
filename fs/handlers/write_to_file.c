@@ -60,44 +60,12 @@ void write_to_file(const char* fs_path,
         cur_inode.size += size;
         write_inode(fd, cur_inode_id, &cur_inode);
 
-//        reset_inode(&cur_inode);
-//        read_inode(fd, cur_inode_id, &cur_inode);
-
         prev_inode_id = cur_inode_id;
         cur_inode_id = cur_inode.inode_id;
 
         reset_inode(&cur_inode);
         read_inode(fd, cur_inode_id, &cur_inode);
     }
-
-//    // lazy inode allocation
-//    if (cur_inode_id == 0) {
-//        struct inode new_inode;
-//        reset_inode(&new_inode);
-//        new_inode.is_file = true;
-//        new_inode.size = 0;
-//
-//        uint16_t new_inode_id = occupy_inode(&sb);
-//
-//        // get prev and update
-//        struct inode prev_inode;
-//        reset_inode(&prev_inode);
-//
-//        read_inode(fd, prev_inode_id, &prev_inode);
-//        prev_inode.inode_id = new_inode_id;
-//
-//        // update cur_inode_id
-//        cur_inode_id = new_inode_id;
-//
-//        // update prev
-//        write_inode(fd, prev_inode_id, &prev_inode);
-//
-//        // write new inode
-//        write_inode(fd, new_inode_id, &new_inode);
-//
-//        // get new inode to cur_inode
-//        read_inode(fd, new_inode_id, &cur_inode);
-//    }
 
     // read data from file to buffer
     read_retry(source_fd, buffer, size);
@@ -154,8 +122,6 @@ void write_to_file(const char* fs_path,
             if (cur_inode.block_ids[j] == 0) {
                 uint16_t new_block_id = occupy_block(&sb);
 
-                printf("\nnew: %d\n", new_block_id);
-
                 cur_inode.block_ids[j] = new_block_id;
             }
 
@@ -173,12 +139,6 @@ void write_to_file(const char* fs_path,
             } else {
                 right_block_shift = BLOCK_SIZE;
             }
-
-            printf("\nwrite bounds: %d %d %d %d\n",
-                   cur_inode_id,
-                   cur_inode.block_ids[j],
-                   left_block_shift,
-                   right_block_shift);
 
             write_block(fd,
                         cur_inode.block_ids[j],

@@ -3,16 +3,7 @@ Sends test commands to stdout
 """
 import random
 from time import sleep
-
-
-log_path = "log.txt"
-second_log_path = "log2.txt"
-stdin_path = "/home/wasd/github/mini-fs/std.in"
-stdout_path = "/home/wasd/github/mini-fs/std.out"
-
-TEST_SIZE = 5000
-MAX_WRITE_READ_SIZE = 48 * 3
-FLUSH_WAIT_TIME = 0.5
+from write_read_test_constants import *
 
 
 def send_cmd(fd, cmd):
@@ -20,11 +11,9 @@ def send_cmd(fd, cmd):
     fd.flush()
     print(cmd, flush=True)
 
-    # sleep(1)
-
 
 def write_randomly(fd, log2):
-    ksi = random.randint(0, MAX_WRITE_READ_SIZE)
+    ksi = random.randint(MIN_WRITE_READ_SIZE, MAX_WRITE_READ_SIZE)
     pos = 0
     fd_stdin = open(stdin_path, 'w')
     while pos + ksi <= TEST_SIZE:

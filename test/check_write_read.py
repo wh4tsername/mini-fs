@@ -1,12 +1,7 @@
 """
 Checks if written and read correctly
 """
-
-
-stdout_path = "std.out"
-log_path = "log.txt"
-
-TEST_SIZE = 5000
+from write_read_test_constants import *
 
 
 def check(fd):
