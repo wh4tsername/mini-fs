@@ -13,3 +13,12 @@ Mini file system stored in `fs.bin` file
 `read file_descriptor /path/to/real/file size` - to read from mini-fs file data to another file  
 ## TESTS  
 to launch tests run `./test/run.sh`  
+## USAGE LIMITS  
+approximate max fs capacity = 320 kB  
+max number of files or subdirs in dir = 32  
+max dir or file name length = 14 symbols  
+max path length = 256 symbols  
+max number of descriptors = 16  
+block size = 512 bytes  
+max number of inodes = 128  
+max number of blocks = 256  

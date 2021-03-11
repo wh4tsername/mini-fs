@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#define NUM_BLOCK_IDS_IN_INODE 3
+#define NUM_BLOCK_IDS_IN_INODE 8
 
 struct inode {
   uint16_t block_ids[NUM_BLOCK_IDS_IN_INODE];
