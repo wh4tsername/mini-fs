@@ -5,6 +5,7 @@
 #include "client/client.h"
 #include "fs/handlers/handlers.h"
 #include <defines.h>
+#include <constants/constants.h>
 
 int main(int argc, char** argv) {
     if (argc != 2) {
@@ -13,11 +14,10 @@ int main(int argc, char** argv) {
 
     const char* fs_path = argv[1];
 
-    const int BUFFER_LENGTH = 256;
-    char buffer[BUFFER_LENGTH];
+    char buffer[MAX_PATH_LENGTH];
 
-    while (read_command(buffer, BUFFER_LENGTH)) {
-        char cmd[BUFFER_LENGTH];
+    while (read_command(buffer, MAX_PATH_LENGTH)) {
+        char cmd[MAX_PATH_LENGTH];
         char* args = parse_token(buffer, cmd);
 
         if (strcmp(cmd, INIT_CMD) == 0) {
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char path[BUFFER_LENGTH];
+            char path[MAX_PATH_LENGTH];
             parse_token(args, path);
 
             list_dir(fs_path, path);
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char path[BUFFER_LENGTH];
+            char path[MAX_PATH_LENGTH];
             parse_token(args, path);
 
             create_dir(fs_path, path);
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char path[BUFFER_LENGTH];
+            char path[MAX_PATH_LENGTH];
             parse_token(args, path);
 
             delete_object(fs_path, path);
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char path[BUFFER_LENGTH];
+            char path[MAX_PATH_LENGTH];
             parse_token(args, path);
 
             create_file(fs_path, path);
@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char path[BUFFER_LENGTH];
+            char path[MAX_PATH_LENGTH];
             parse_token(args, path);
 
             open_file(fs_path, path);
@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char descr_str[BUFFER_LENGTH];
+            char descr_str[MAX_PATH_LENGTH];
             parse_token(args, descr_str);
 
             uint16_t file_descr = strtol(descr_str, NULL, 10);
@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char descr_str[BUFFER_LENGTH];
+            char descr_str[MAX_PATH_LENGTH];
             args = parse_token(args, descr_str);
 
             uint16_t file_descr = strtol(descr_str, NULL, 10);
@@ -116,7 +116,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char pos_str[BUFFER_LENGTH];
+            char pos_str[MAX_PATH_LENGTH];
             parse_token(args, pos_str);
 
             uint32_t pos = strtol(pos_str, NULL, 10);
@@ -133,7 +133,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char descr_str[BUFFER_LENGTH];
+            char descr_str[MAX_PATH_LENGTH];
             args = parse_token(args, descr_str);
 
             uint16_t file_descr = strtol(descr_str, NULL, 10);
@@ -148,7 +148,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char path[BUFFER_LENGTH];
+            char path[MAX_PATH_LENGTH];
             args = parse_token(args, path);
 
             // two arg check
@@ -158,10 +158,10 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char size_str[BUFFER_LENGTH];
+            char size_str[MAX_PATH_LENGTH];
             parse_token(args, size_str);
 
-            uint16_t size = strtol(size_str, NULL, 10);
+            uint32_t size = strtol(size_str, NULL, 10);
             if (errno == ERANGE) {
                 panic("incorrect file descriptor");
             }
@@ -175,7 +175,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char descr_str[BUFFER_LENGTH];
+            char descr_str[MAX_PATH_LENGTH];
             args = parse_token(args, descr_str);
 
             uint16_t file_descr = strtol(descr_str, NULL, 10);
@@ -190,7 +190,7 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char path[BUFFER_LENGTH];
+            char path[MAX_PATH_LENGTH];
             args = parse_token(args, path);
 
             // two arg check
@@ -200,10 +200,10 @@ int main(int argc, char** argv) {
                 continue;
             }
 
-            char size_str[BUFFER_LENGTH];
+            char size_str[MAX_PATH_LENGTH];
             parse_token(args, size_str);
 
-            uint16_t size = strtol(size_str, NULL, 10);
+            uint32_t size = strtol(size_str, NULL, 10);
             if (errno == ERANGE) {
                 panic("incorrect file descriptor");
             }
