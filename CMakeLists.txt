@@ -3,6 +3,8 @@ project(mini_fs C)
 
 set(CMAKE_C_STANDARD 11)
 
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+
 set(MINI_FS_CLIENT_SOURCES client/client.c)
 set(
         MINI_FS_HANDLER_SOURCES
