@@ -3,3 +3,5 @@ cmake-build-debug/
 fs.bin
 std.out
 std.in
+log.txt
+log2.txt
