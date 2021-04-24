@@ -9,15 +9,10 @@
 void write_to_file(int output_fd,
                    const char* fs_path,
                    uint16_t file_descr,
-                   const char* path,
+                   const char* data,
                    uint32_t size) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
-
-    char* buffer = malloc(size);
-
-    int source_fd = open(path, O_RDONLY, S_IRUSR | S_IWUSR);
-    conditional_parse_errno(source_fd == -1);
 
     // get superblock
     struct superblock sb;
@@ -68,9 +63,6 @@ void write_to_file(int output_fd,
         reset_inode(&cur_inode);
         read_inode(fd, cur_inode_id, &cur_inode);
     }
-
-    // read data from file to buffer
-    read_retry(source_fd, buffer, size);
 
     // write recursively
     uint32_t buffer_pos = 0;
@@ -145,7 +137,7 @@ void write_to_file(int output_fd,
             write_block(fd,
                         cur_inode.block_ids[j],
                         left_block_shift,
-                        buffer + buffer_pos,
+                        data + buffer_pos,
                         right_block_shift - left_block_shift);
 
             buffer_pos += right_block_shift - left_block_shift;
@@ -177,10 +169,6 @@ void write_to_file(int output_fd,
 
     // write superblock
     write_superblock(fd, &sb);
-
-    free(buffer);
-
-    close(source_fd);
 
     close(fd);
 }

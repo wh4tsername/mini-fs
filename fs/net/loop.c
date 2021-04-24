@@ -24,6 +24,7 @@ bool decode_commands(int fd) {
   recv_opcode(fd, &op);
 
   char* path = NULL;
+  char* data = NULL;
   bool ret = true;
   uint16_t file_descr = 0;
   uint32_t pos = 0;
@@ -107,23 +108,29 @@ bool decode_commands(int fd) {
       log("command: write", NULL);
 
       recv_uint16_t(fd, &file_descr);
-      recv_string(fd, &path);
+      recv_string(fd, &data);
       recv_uint32_t(fd, &pos);
 
-      write_to_file(fd, FS_FILE, file_descr, path, pos);
+      log("file_descr: %d", file_descr);
+      log("size: %d", pos);
+
+      write_to_file(fd, FS_FILE, file_descr, data, pos);
       break;
 
     case FS_READ:
       log("command: read", NULL);
 
       recv_uint16_t(fd, &file_descr);
-      recv_string(fd, &path);
       recv_uint32_t(fd, &pos);
 
-      read_from_file(fd, FS_FILE, file_descr, path, pos);
+      log("file_descr: %d", file_descr);
+      log("size: %d", pos);
+
+      read_from_file(fd, FS_FILE, file_descr, pos);
       break;
   }
 
+  free(data);
   free(path);
 
   return ret;

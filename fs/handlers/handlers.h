@@ -32,6 +32,6 @@ void write_to_file(int output_fd, const char* fs_path, uint16_t file_descr,
                    const char* path, uint32_t size);
 
 void read_from_file(int output_fd, const char* fs_path, uint16_t file_descr,
-                    const char* path, uint32_t size);
+                    uint32_t size);
 
 #endif  // MINI_FS__HANDLERS_H_

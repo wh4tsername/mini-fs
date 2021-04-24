@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <sys/socket.h>
 #include <stdbool.h>
 #include <string.h>
@@ -54,6 +55,23 @@ void output_results(int sockd) {
 //    dprintf(STDERR_FILENO, "counter: %ld\n", lines_counter);
 //    dprintf(STDERR_FILENO, "is_set: %d\n", num_lines_is_set);
   }
+}
+
+void output_read_result(int sockd, uint32_t size, int dest_fd) {
+  char* buffer = malloc(size);
+
+  long long total = 0;
+  while (total != size) {
+    ssize_t read = recv(sockd, buffer, size, 0);
+
+    conditional_handle_error(read == -1, "read results receiving error");
+
+    write(dest_fd, buffer, read);
+
+    total += read;
+  }
+
+  free(buffer);
 }
 
 void send_init_fs(int sockd) {
@@ -116,7 +134,17 @@ void send_write_to_file(int sockd, uint16_t file_descr,
   send_opcode(sockd, FS_WRITE);
 
   send_uint16_t(sockd, file_descr);
-  send_string(sockd, path);
+
+  char* content = malloc(size);
+  int source_fd = open(path, O_RDONLY, S_IRUSR | S_IWUSR);
+  conditional_handle_error(read(source_fd, content, size) == -1,
+                           "error while reading from src file for write operation");
+
+  send_string(sockd, content);
+
+  close(source_fd);
+  free(content);
+
   send_uint32_t(sockd, size);
 }
 
@@ -125,8 +153,14 @@ void send_read_from_file(int sockd, uint16_t file_descr,
   send_opcode(sockd, FS_READ);
 
   send_uint16_t(sockd, file_descr);
-  send_string(sockd, path);
+
+  int dest_fd = open(path, O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
+
   send_uint32_t(sockd, size);
+
+  output_read_result(sockd, size, dest_fd);
+
+  close(dest_fd);
 }
 
 void send_quit(int sockd) {

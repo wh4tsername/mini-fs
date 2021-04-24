@@ -9,13 +9,9 @@
 void read_from_file(int output_fd,
                     const char* fs_path,
                     uint16_t file_descr,
-                    const char* path,
                     uint32_t size) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
-
-    int dest_fd = open(path, O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
-    conditional_parse_errno(dest_fd == -1);
 
     // get descriptor table
     struct descriptor_table dt;
@@ -111,7 +107,7 @@ void read_from_file(int output_fd,
                        buffer,
                        right_block_shift - left_block_shift);
 
-            write_retry(dest_fd,
+            write_retry(output_fd,
                         buffer,
                         right_block_shift - left_block_shift);
         }
@@ -126,8 +122,6 @@ void read_from_file(int output_fd,
     write_descriptor_table(fd, &dt);
 
     free(buffer);
-
-    close(dest_fd);
 
     close(fd);
 }
