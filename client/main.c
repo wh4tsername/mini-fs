@@ -1,5 +1,12 @@
 #include "client/client.h"
 
+#include <defines.h>
+
 int main(int argc, char** argv) {
-  return client_main(argc, argv);
+  if (argc != 2) {
+    panic("file system server address should be specified as an argument");
+  }
+
+  const char* address_string = argv[1];
+  return client_main(address_string);
 }

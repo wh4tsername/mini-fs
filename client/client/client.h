@@ -1,13 +1,7 @@
 #ifndef MINI_FS__CLIENT_H_
 #define MINI_FS__CLIENT_H_
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <string.h>
-
-#include <constants/commands.h>
-
 // client main
-int client_main(int argc, char** argv);
+int client_main(const char* address_string);
 
 #endif //MINI_FS__CLIENT_H_

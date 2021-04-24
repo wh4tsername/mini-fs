@@ -2,11 +2,15 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <stdio.h>
 
 #include "net_handlers.h"
 #include "connection.h"
+
 #include <defines.h>
 #include <constants/constants.h>
+#include <constants/commands.h>
 
 bool read_command(char* buffer, int buffer_size) {
   printf("mini-fs$ ");
@@ -39,12 +43,7 @@ char* parse_token(char* buffer, char* token) {
   return token_pos == NULL ? NULL : token_pos + 1;
 }
 
-int client_main(int argc, char** argv) {
-  if (argc != 2) {
-    panic("file system server address should be specified as an argument");
-  }
-
-  const char* address_string = argv[1];
+int client_main(const char* address_string) {
   int sockd = establish_connection(address_string);
 
   char buffer[MAX_PATH_LENGTH];

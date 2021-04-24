@@ -21,9 +21,15 @@ set(
         structures/descriptor_table.c
 )
 
+set(
+        MINI_FS_NET_SOURCES
+        net/loop.c
+)
+
 add_executable(
         mini_fs_server
         main.c
         ${MINI_FS_HANDLER_SOURCES}
         ${MINI_FS_STRUCTURES_SOURCES}
+        ${MINI_FS_NET_SOURCES}
 )

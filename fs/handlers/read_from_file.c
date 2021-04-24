@@ -4,6 +4,7 @@
 #include <constants/fs_constants.h>
 #include <helpers.h>
 #include <disk_utils.h>
+#include <io_utils.h>
 
 void read_from_file(const char* fs_path,
                     uint16_t file_descr,
