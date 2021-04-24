@@ -5,7 +5,10 @@
 #include <helpers.h>
 #include <disk_utils.h>
 
-void seek_pos(const char* fs_path, uint16_t file_descr, uint32_t pos) {
+void seek_pos(int output_fd,
+              const char* fs_path,
+              uint16_t file_descr,
+              uint32_t pos) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 

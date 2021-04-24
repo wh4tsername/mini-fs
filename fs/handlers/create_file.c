@@ -21,7 +21,7 @@ bool check_for_duplicate_file(int fd,
     return false;
 }
 
-void create_file(const char* fs_path, const char* path) {
+void create_file(int output_fd, const char* fs_path, const char* path) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 

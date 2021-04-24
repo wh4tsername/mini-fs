@@ -3,6 +3,59 @@
 #include <constants/opcodes.h>
 #include <net_utils.h>
 
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <stdbool.h>
+#include <string.h>
+
+#include <defines.h>
+
+void output_results(int sockd) {
+  const int BUFFER_SIZE = 10000;
+  char buffer[BUFFER_SIZE];
+
+  long num_lines = 0;
+  bool num_lines_is_set = false;
+  long lines_counter = 0;
+  while (!(num_lines_is_set && num_lines == lines_counter)) {
+//    dprintf(STDERR_FILENO, "num_lines: %ld\n", num_lines);
+//    dprintf(STDERR_FILENO, "counter: %ld\n", lines_counter);
+//    dprintf(STDERR_FILENO, "is_set: %d\n", num_lines_is_set);
+
+    ssize_t read = recv(sockd, buffer, BUFFER_SIZE, 0);
+    conditional_handle_error(read == -1, "results receiving error");
+
+    buffer[read] = '\0';
+
+//    dprintf(STDERR_FILENO, "data: ");
+//    write(STDERR_FILENO, buffer, read);
+//    dprintf(STDERR_FILENO, "\n");
+
+    char* buffer_start_pos = buffer;
+    if (!num_lines_is_set && read >= 1) {
+      num_lines = buffer[0] - '0';
+      num_lines_is_set = true;
+      ++buffer_start_pos;
+      --read;
+    }
+
+    if (num_lines_is_set && read >= 1) {
+      char* pointer = buffer_start_pos;
+      while ((pointer = strchr(pointer, '\n')) != NULL) {
+        ++lines_counter;
+        ++pointer;
+      }
+
+      write(STDOUT_FILENO, buffer_start_pos, read);
+    }
+
+//    dprintf(STDERR_FILENO, "num_lines: %ld\n", num_lines);
+//    dprintf(STDERR_FILENO, "counter: %ld\n", lines_counter);
+//    dprintf(STDERR_FILENO, "is_set: %d\n", num_lines_is_set);
+  }
+}
+
 void send_init_fs(int sockd) {
   send_opcode(sockd, FS_INIT);
 }
@@ -15,6 +68,8 @@ void send_list_dir(int sockd, const char* path) {
   send_opcode(sockd, FS_LS);
 
   send_string(sockd, path);
+
+  output_results(sockd);
 }
 
 void send_create_dir(int sockd, const char* path) {
@@ -39,6 +94,8 @@ void send_open_file(int sockd, const char* path) {
   send_opcode(sockd, FS_OPEN);
 
   send_string(sockd, path);
+
+  output_results(sockd);
 }
 
 void send_close_file(int sockd, uint16_t file_descr) {

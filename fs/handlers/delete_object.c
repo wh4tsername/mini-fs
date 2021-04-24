@@ -85,7 +85,7 @@ void delete_directory(int fd,
     erase_inode(fd, inode_id);
 }
 
-void delete_object(const char* fs_path, const char* path) {
+void delete_object(int output_fd, const char* fs_path, const char* path) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 

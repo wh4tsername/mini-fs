@@ -4,8 +4,10 @@
 #include <constants/fs_constants.h>
 #include <helpers.h>
 #include <disk_utils.h>
+#include <io_utils.h>
 
-void write_to_file(const char* fs_path,
+void write_to_file(int output_fd,
+                   const char* fs_path,
                    uint16_t file_descr,
                    const char* path,
                    uint32_t size) {

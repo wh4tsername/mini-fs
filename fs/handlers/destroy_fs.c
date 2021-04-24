@@ -2,7 +2,7 @@
 #include <constants/fs_constants.h>
 #include <defines.h>
 
-void destroy_fs(const char* fs_path) {
+void destroy_fs(int output_fd, const char* fs_path) {
     int fd = open(fs_path, O_RDWR | O_TRUNC, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 

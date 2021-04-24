@@ -23,7 +23,7 @@ bool check_for_file(int fd,
     return false;
 }
 
-void open_file(const char* fs_path, const char* path) {
+void open_file(int output_fd, const char* fs_path, const char* path) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
     conditional_parse_errno(fd == -1);
 
@@ -72,7 +72,8 @@ void open_file(const char* fs_path, const char* path) {
 
     // occupy file descriptor
     uint16_t descr = occupy_descriptor(&dt, inode_id);
-    printf("fd: %hu\n", descr);
+    dprintf(output_fd, "%u", (unsigned char)1);
+    dprintf(output_fd, "fd: %hu\n", descr);
 
     // write descriptor table
     write_descriptor_table(fd, &dt);

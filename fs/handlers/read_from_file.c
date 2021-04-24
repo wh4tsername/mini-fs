@@ -6,7 +6,8 @@
 #include <disk_utils.h>
 #include <io_utils.h>
 
-void read_from_file(const char* fs_path,
+void read_from_file(int output_fd,
+                    const char* fs_path,
                     uint16_t file_descr,
                     const char* path,
                     uint32_t size) {

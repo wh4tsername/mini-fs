@@ -37,13 +37,13 @@ bool decode_commands(int fd) {
     case FS_INIT:
       log("command: init", NULL);
 
-      init_fs(FS_FILE);
+      init_fs(fd, FS_FILE);
       break;
 
     case FS_DESTROY:
       log("command: destroy", NULL);
 
-      destroy_fs(FS_FILE);
+      destroy_fs(fd, FS_FILE);
       break;
 
     case FS_LS:
@@ -51,7 +51,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      list_dir(FS_FILE, path);
+      list_dir(fd, FS_FILE, path);
       break;
 
     case FS_MKDIR:
@@ -59,7 +59,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      create_dir(FS_FILE, path);
+      create_dir(fd, FS_FILE, path);
       break;
 
     case FS_RM:
@@ -67,7 +67,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      delete_object(FS_FILE, path);
+      delete_object(fd, FS_FILE, path);
       break;
 
     case FS_TOUCH:
@@ -75,7 +75,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      create_file(FS_FILE, path);
+      create_file(fd, FS_FILE, path);
       break;
 
     case FS_OPEN:
@@ -83,7 +83,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      open_file(FS_FILE, path);
+      open_file(fd, FS_FILE, path);
       break;
 
     case FS_CLOSE:
@@ -91,7 +91,7 @@ bool decode_commands(int fd) {
 
       recv_uint16_t(fd, &file_descr);
 
-      close_file(FS_FILE, file_descr);
+      close_file(fd, FS_FILE, file_descr);
       break;
 
     case FS_SEEK:
@@ -100,7 +100,7 @@ bool decode_commands(int fd) {
       recv_uint16_t(fd, &file_descr);
       recv_uint32_t(fd, &pos);
 
-      seek_pos(FS_FILE, file_descr, pos);
+      seek_pos(fd, FS_FILE, file_descr, pos);
       break;
 
     case FS_WRITE:
@@ -110,7 +110,7 @@ bool decode_commands(int fd) {
       recv_string(fd, &path);
       recv_uint32_t(fd, &pos);
 
-      write_to_file(FS_FILE, file_descr, path, pos);
+      write_to_file(fd, FS_FILE, file_descr, path, pos);
       break;
 
     case FS_READ:
@@ -120,7 +120,7 @@ bool decode_commands(int fd) {
       recv_string(fd, &path);
       recv_uint32_t(fd, &pos);
 
-      read_from_file(FS_FILE, file_descr, path, pos);
+      read_from_file(fd, FS_FILE, file_descr, path, pos);
       break;
   }
 
@@ -186,6 +186,12 @@ int server_loop(long port, int stop_fd) {
   return 0;
 }
 
+//int init_server(long port) {
+//  int fds[2];
+//  conditional_handle_error(pipe(fds) == -1, "pipe error");
+//  return server_loop(port, fds[0]);
+//}
+
 int init_server(long port) {
   sigset_t full_mask;
   sigfillset(&full_mask);
@@ -213,10 +219,13 @@ int init_server(long port) {
       int received_signal = info.si_signo;
 
       if (received_signal == SIGCHLD) {
+        log("got SIGCHLD, stopping...", NULL);
         break;
       }
       if (received_signal == SIGTERM ||
           received_signal == SIGINT) {
+        log("got signal, stopping..", NULL);
+
         ssize_t written = write(fds[1], "!", 1);
         conditional_handle_error(written != 1, "writing failed");
         close(fds[1]);
