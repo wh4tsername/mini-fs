@@ -2,7 +2,7 @@ set(
         FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/defines.h
         ${CMAKE_CURRENT_SOURCE_DIR}/helpers.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/disk_utils.h
         ${CMAKE_CURRENT_SOURCE_DIR}/constants/commands.h
         ${CMAKE_CURRENT_SOURCE_DIR}/constants/constants.h
         ${CMAKE_CURRENT_SOURCE_DIR}/constants/fs_constants.h

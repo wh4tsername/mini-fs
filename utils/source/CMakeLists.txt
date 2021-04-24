@@ -1,6 +1,6 @@
 set(
         FILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/utils.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/disk_utils.c
         ${CMAKE_CURRENT_SOURCE_DIR}/helpers.c
 )
 set(SUBDIRECTORIES "")

@@ -3,7 +3,7 @@
 #include <defines.h>
 #include <constants/fs_constants.h>
 #include <helpers.h>
-#include <utils.h>
+#include <disk_utils.h>
 
 bool check_for_file(int fd,
                     struct inode* inode,

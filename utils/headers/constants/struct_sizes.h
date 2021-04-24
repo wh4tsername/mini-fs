@@ -1,10 +1,10 @@
 #ifndef MINI_FS_UTILS_STRUCT_SIZES_H_
 #define MINI_FS_UTILS_STRUCT_SIZES_H_
 
-#include "../../../fs/superblock.h"
-#include "../../../fs/inode.h"
-#include "../../../fs/dir_record.h"
-#include "../../../fs/descriptor_table.h"
+#include "../../../fs/structures/superblock.h"
+#include "../../../fs/structures/inode.h"
+#include "../../../fs/structures/dir_record.h"
+#include "../../../fs/structures/descriptor_table.h"
 
 #define SUPERBLOCK_SIZE (sizeof(struct superblock))
 #define INODE_SIZE (sizeof(struct inode))

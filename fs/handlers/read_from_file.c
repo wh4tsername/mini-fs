@@ -3,7 +3,7 @@
 #include <defines.h>
 #include <constants/fs_constants.h>
 #include <helpers.h>
-#include <utils.h>
+#include <disk_utils.h>
 
 void read_from_file(const char* fs_path,
                     uint16_t file_descr,

@@ -1,11 +1,11 @@
 #include "handlers.h"
 #include <defines.h>
-#include <utils.h>
+#include <disk_utils.h>
 #include <helpers.h>
 #include <constants/constants.h>
 #include <constants/fs_constants.h>
-#include "../superblock.h"
-#include "../dir_record.h"
+#include "../structures/superblock.h"
+#include "../structures/dir_record.h"
 
 void make_partition(int fd) {
     // create superblock

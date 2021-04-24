@@ -1,7 +1,7 @@
 #include "handlers.h"
 
 #include <defines.h>
-#include <utils.h>
+#include <disk_utils.h>
 #include <helpers.h>
 #include <constants/fs_constants.h>
 

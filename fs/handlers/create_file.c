@@ -3,7 +3,7 @@
 #include <helpers.h>
 #include <defines.h>
 #include <constants/fs_constants.h>
-#include <utils.h>
+#include <disk_utils.h>
 
 bool check_for_duplicate_file(int fd,
                               struct inode* inode,

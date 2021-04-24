@@ -7,10 +7,7 @@
 
 #include <constants/commands.h>
 
-// read function
-bool read_command(char* buffer, int buffer_size);
-
-// parse cmd
-char* parse_token(char* buffer, char* token);
+// client main
+int client_main(int argc, char** argv);
 
 #endif //MINI_FS__CLIENT_H_

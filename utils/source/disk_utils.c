@@ -1,47 +1,11 @@
-#include <utils.h>
+#include <disk_utils.h>
 #include <constants/constants.h>
 #include <constants/struct_sizes.h>
 #include <defines.h>
 
 #include <string.h>
 
-int write_retry(const int fd, const char* buffer,
-                const int buffer_size) {
-    int total_bytes = 0;
-    int bytes_written = 0;
-
-    while (total_bytes != buffer_size) {
-        bytes_written = write(fd, &buffer[total_bytes],
-                              buffer_size - total_bytes);
-
-        if (bytes_written == -1) {
-            return bytes_written;
-        }
-
-        total_bytes += bytes_written;
-    }
-
-    return total_bytes;
-}
-
-int read_retry(const int fd, char* buffer,
-               const int buffer_size) {
-    int total_bytes = 0;
-    int bytes_read = 0;
-
-    while (total_bytes != buffer_size) {
-        bytes_read = read(fd, &buffer[total_bytes],
-                          buffer_size - total_bytes);
-
-        if (bytes_read == -1) {
-            return bytes_read;
-        }
-
-        total_bytes += bytes_read;
-    }
-
-    return total_bytes;
-}
+#include <io_utils.h>
 
 void write_superblock(int fd, const struct superblock* sb) {
     lseek(fd, 0, SEEK_SET);

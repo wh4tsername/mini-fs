@@ -5,14 +5,10 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#include "../../fs/dir_record.h"
-#include "../../fs/inode.h"
-#include "../../fs/superblock.h"
-#include "../../fs/descriptor_table.h"
-
-int write_retry(int fd, const char* buffer, int buffer_size);
-
-int read_retry(int fd, char* buffer, int buffer_size);
+#include "../../fs/structures/dir_record.h"
+#include "../../fs/structures/inode.h"
+#include "../../fs/structures/superblock.h"
+#include "../../fs/structures/descriptor_table.h"
 
 void write_superblock(int fd, const struct superblock* sb);
 
