@@ -1,7 +1,6 @@
 set(
         FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/defines.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/helpers.h
         ${CMAKE_CURRENT_SOURCE_DIR}/io_utils.h
         ${CMAKE_CURRENT_SOURCE_DIR}/net_utils.h
         ${CMAKE_CURRENT_SOURCE_DIR}/string_utils.h

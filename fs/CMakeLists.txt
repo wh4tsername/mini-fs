@@ -1,6 +1,7 @@
 set(
         MINI_FS_SERVER_UTILS_SOURCES
         module/server_utils/disk_utils.c
+        module/server_utils/helpers.c
 )
 
 set(

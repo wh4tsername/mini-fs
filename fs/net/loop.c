@@ -30,25 +30,25 @@ bool decode_commands(int fd) {
   uint32_t pos = 0;
   switch (op) {
     case FS_QUIT:
-      log("command: quit", NULL);
+      log1("command: quit");
 
       ret = false;
       break;
 
     case FS_INIT:
-      log("command: init", NULL);
+      log1("command: init");
 
       init_fs(fd, FS_FILE);
       break;
 
     case FS_DESTROY:
-      log("command: destroy", NULL);
+      log1("command: destroy");
 
       destroy_fs(fd, FS_FILE);
       break;
 
     case FS_LS:
-      log("command: ls", NULL);
+      log1("command: ls");
 
       recv_string(fd, &path);
 
@@ -56,7 +56,7 @@ bool decode_commands(int fd) {
       break;
 
     case FS_MKDIR:
-      log("command: mkdir", NULL);
+      log1("command: mkdir");
 
       recv_string(fd, &path);
 
@@ -64,7 +64,7 @@ bool decode_commands(int fd) {
       break;
 
     case FS_RM:
-      log("command: rm", NULL);
+      log1("command: rm");
 
       recv_string(fd, &path);
 
@@ -72,7 +72,7 @@ bool decode_commands(int fd) {
       break;
 
     case FS_TOUCH:
-      log("command: touch", NULL);
+      log1("command: touch");
 
       recv_string(fd, &path);
 
@@ -80,7 +80,7 @@ bool decode_commands(int fd) {
       break;
 
     case FS_OPEN:
-      log("command: open", NULL);
+      log1("command: open");
 
       recv_string(fd, &path);
 
@@ -88,7 +88,7 @@ bool decode_commands(int fd) {
       break;
 
     case FS_CLOSE:
-      log("command: close", NULL);
+      log1("command: close");
 
       recv_uint16_t(fd, &file_descr);
 
@@ -96,7 +96,7 @@ bool decode_commands(int fd) {
       break;
 
     case FS_SEEK:
-      log("command: seek", NULL);
+      log1("command: seek");
 
       recv_uint16_t(fd, &file_descr);
       recv_uint32_t(fd, &pos);
@@ -105,26 +105,26 @@ bool decode_commands(int fd) {
       break;
 
     case FS_WRITE:
-      log("command: write", NULL);
+      log1("command: write");
 
       recv_uint16_t(fd, &file_descr);
       recv_string(fd, &data);
       recv_uint32_t(fd, &pos);
 
-      log("file_descr: %d", file_descr);
-      log("size: %d", pos);
+      log2("file_descr: %d", file_descr);
+      log2("size: %d", pos);
 
       write_to_file(fd, FS_FILE, file_descr, data, pos);
       break;
 
     case FS_READ:
-      log("command: read", NULL);
+      log1("command: read");
 
       recv_uint16_t(fd, &file_descr);
       recv_uint32_t(fd, &pos);
 
-      log("file_descr: %d", file_descr);
-      log("size: %d", pos);
+      log2("file_descr: %d", file_descr);
+      log2("size: %d", pos);
 
       read_from_file(fd, FS_FILE, file_descr, pos);
       break;
@@ -178,12 +178,12 @@ int server_loop(long port, int stop_fd) {
     int fd = accept(connection_fd, NULL, NULL);
     conditional_handle_error(fd == -1, "can't create socket descriptor");
 
-    log("client connected", NULL);
+    log1("client connected");
 
     while (decode_commands(fd)) {
     }
 
-    log("client disconnected", NULL);
+    log2("client disconnected", NULL);
 
     shutdown(fd, SHUT_RDWR);
     close(fd);
@@ -222,7 +222,7 @@ int init_server(long port) {
   } else {
     close(fds[0]);
 
-    log("pid %d", getpid());
+    log2("pid %d", getpid());
 
     while (true) {
       siginfo_t info;
@@ -230,12 +230,12 @@ int init_server(long port) {
       int received_signal = info.si_signo;
 
       if (received_signal == SIGCHLD) {
-        log("got SIGCHLD, stopping...", NULL);
+        log1("got SIGCHLD, stopping...");
         close(fds[1]);
         break;
       }
       if (received_signal == SIGTERM || received_signal == SIGINT) {
-        log("got signal, stopping..", NULL);
+        log1("got signal, stopping..");
 
         ssize_t written = write(fds[1], "!", 1);
         conditional_handle_error(written != 1, "writing failed");

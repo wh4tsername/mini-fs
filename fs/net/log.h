@@ -3,9 +3,14 @@
 
 #include <stdio.h>
 
-#define log(format, arg)                  \
+#define log2(format, arg)                 \
   dprintf(STDERR_FILENO, "SERVER LOG: "); \
   dprintf(STDERR_FILENO, format, arg);    \
+  dprintf(STDERR_FILENO, "\n");
+
+#define log1(msg)                         \
+  dprintf(STDERR_FILENO, "SERVER LOG: "); \
+  dprintf(STDERR_FILENO, msg);            \
   dprintf(STDERR_FILENO, "\n");
 
 #endif  // MINI_FS_FS_NET_LOG_H_

@@ -1,9 +1,9 @@
 #include <defines.h>
-#include <helpers.h>
+#include "helpers.h"
 #include <string.h>
 #include <string_utils.h>
 
-#include "../../fs/module/server_utils/disk_utils.h"
+#include "disk_utils.h"
 
 uint16_t create_dir_block_and_inode(int fd, struct superblock* sb, bool is_root,
                                     uint16_t prev_inode_id) {

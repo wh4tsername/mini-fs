@@ -5,8 +5,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "../../fs/structures/inode.h"
-#include "../../fs/structures/superblock.h"
+#include "../structures/inode.h"
+#include "../structures/superblock.h"
 
 uint16_t create_dir_block_and_inode(int fd, struct superblock* sb, bool is_root,
                                     uint16_t prev_inode_id);
