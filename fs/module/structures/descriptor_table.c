@@ -1,6 +1,6 @@
 #include "descriptor_table.h"
 
-#include <defines.h>
+#include "../server_utils/module_defines.h"
 
 void reset_descriptor_table(struct descriptor_table* dt) {
     for (uint16_t i = 0; i < NUM_DESCRIPTORS; ++i) {
@@ -15,7 +15,7 @@ uint16_t occupy_descriptor(
         uint16_t inode_id) {
     for (uint16_t i = 0; i < NUM_DESCRIPTORS; ++i) {
         if (dt->inode_id[i] == inode_id) {
-            panic("can't open same file twice");
+            server_panic("can't open same file twice");
         }
     }
 
@@ -28,12 +28,12 @@ uint16_t occupy_descriptor(
         }
     }
 
-    panic("no empty file descriptors to occupy");
+    server_panic("no empty file descriptors to occupy");
 }
 
 void free_descriptor(struct  descriptor_table* dt, uint16_t descr) {
-    conditional_handle_error(dt->fd_mask[descr] == false,
-                             "trying to double close file descriptor");
+    cond_server_panic(dt->fd_mask[descr] == false,
+                      "trying to double close file descriptor");
 
     dt->fd_mask[descr] = false;
     dt->inode_id[descr] = 0;
@@ -43,8 +43,8 @@ void free_descriptor(struct  descriptor_table* dt, uint16_t descr) {
 void change_pos(struct descriptor_table* dt,
                 uint16_t descr,
                 uint32_t pos) {
-    conditional_handle_error(dt->fd_mask[descr] == false,
-                             "trying to operate with closed file descriptor");
+    cond_server_panic(dt->fd_mask[descr] == false,
+                      "trying to operate with closed file descriptor");
 
     dt->pos[descr] = pos;
 }

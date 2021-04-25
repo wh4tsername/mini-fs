@@ -1,13 +1,13 @@
 #include "handlers.h"
 
-#include <defines.h>
-#include <constants/fs_constants.h>
 #include <helpers.h>
-#include <disk_utils.h>
+#include "../server_utils/disk_utils.h"
+
+#include "../server_utils/module_defines.h"
 
 void close_file(int output_fd, const char* fs_path, uint16_t file_descr) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
-    conditional_parse_errno(fd == -1);
+    cond_server_panic(fd == -1, "open error");
 
     // get descriptor table
     struct descriptor_table dt;

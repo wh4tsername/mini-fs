@@ -14,7 +14,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include "../handlers/handlers.h"
+#include "../module/handlers/handlers.h"
 #include "log.h"
 
 #define FS_FILE "../../fs.bin"

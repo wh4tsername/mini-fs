@@ -1,6 +1,6 @@
 #include "handlers.h"
-#include <defines.h>
-#include <disk_utils.h>
+#include "../server_utils/disk_utils.h"
+#include "../server_utils/module_defines.h"
 #include <helpers.h>
 #include <constants/constants.h>
 #include <constants/fs_constants.h>
@@ -26,7 +26,7 @@ void make_partition(int fd) {
 
 void init_fs(int output_fd, const char* fs_path) {
     int fd = open(fs_path, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-    conditional_parse_errno(fd == -1);
+    cond_server_panic(fd == -1, "open error");
 
     ftruncate(fd, FS_SIZE);
 

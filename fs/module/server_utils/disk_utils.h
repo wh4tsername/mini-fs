@@ -5,10 +5,10 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#include "../../fs/structures/dir_record.h"
-#include "../../fs/structures/inode.h"
-#include "../../fs/structures/superblock.h"
-#include "../../fs/structures/descriptor_table.h"
+#include "../structures/dir_record.h"
+#include "../structures/inode.h"
+#include "../structures/superblock.h"
+#include "../structures/descriptor_table.h"
 
 void write_superblock(int fd, const struct superblock* sb);
 

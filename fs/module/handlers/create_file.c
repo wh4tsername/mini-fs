@@ -1,9 +1,10 @@
 #include "handlers.h"
 
 #include <helpers.h>
-#include <defines.h>
 #include <constants/fs_constants.h>
-#include <disk_utils.h>
+
+#include "../server_utils/disk_utils.h"
+#include "../server_utils/module_defines.h"
 
 bool check_for_duplicate_file(int fd,
                               struct inode* inode,
@@ -23,7 +24,7 @@ bool check_for_duplicate_file(int fd,
 
 void create_file(int output_fd, const char* fs_path, const char* path) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
-    conditional_parse_errno(fd == -1);
+    cond_server_panic(fd == -1, "open error");
 
     char path_to_traverse[256];
     char file_name[256];
@@ -49,7 +50,7 @@ void create_file(int output_fd, const char* fs_path, const char* path) {
                DIR_RECORD_SIZE);
     uint16_t prev_inode_id = record.inode_id;
 
-    conditional_handle_error(
+    cond_server_panic(
         check_for_duplicate_file(
             fd,
             &prev_inode,

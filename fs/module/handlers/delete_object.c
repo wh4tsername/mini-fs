@@ -1,7 +1,7 @@
 #include "handlers.h"
-#include <disk_utils.h>
+#include "../server_utils/disk_utils.h"
+#include "../server_utils/module_defines.h"
 #include <helpers.h>
-#include <defines.h>
 #include <constants/fs_constants.h>
 
 #include <stdbool.h>
@@ -87,13 +87,13 @@ void delete_directory(int fd,
 
 void delete_object(int output_fd, const char* fs_path, const char* path) {
     int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
-    conditional_parse_errno(fd == -1);
+    cond_server_panic(fd == -1, "open error");
 
     char path_to_traverse[MAX_PATH_LENGTH];
     char obj_name[MAX_PATH_LENGTH];
     split_path(path, path_to_traverse, obj_name);
 
-    conditional_handle_error(
+    cond_server_panic(
         strcmp(obj_name, ".") == 0 || strcmp(obj_name, "..") == 0,
         "can't delete \".\" or \"..\""
         );
@@ -110,7 +110,7 @@ void delete_object(int output_fd, const char* fs_path, const char* path) {
 
     // get inode of obj
     uint16_t inode_id;
-    conditional_handle_error(
+    cond_server_panic(
         !check_if_obj_exists(
             fd,
             &prev_inode,

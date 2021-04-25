@@ -1,13 +1,12 @@
-#include <defines.h>
-#include <disk_utils.h>
+#include "../server_utils/disk_utils.h"
+#include "../server_utils/module_defines.h"
 #include <helpers.h>
-#include <stdlib.h>
 
 #include "handlers.h"
 
 void list_dir(int output_fd, const char* fs_path, const char* path) {
   int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
-  conditional_parse_errno(fd == -1);
+  cond_server_panic(fd == -1, "open error");
 
   struct inode inode;
   traverse_path(fd, path, &inode);
