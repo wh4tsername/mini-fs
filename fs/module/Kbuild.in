@@ -1,2 +1,2 @@
-obj-m := module.o
+obj-m := mini-fs-module.o
 mymodule-objs := $(pathsubst %.c,%.o, $(filter %.c, @MINI_FS_MODULE_SOURCES_STRING@))

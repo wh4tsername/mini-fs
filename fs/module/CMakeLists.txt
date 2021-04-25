@@ -49,7 +49,7 @@ add_library(
         ${MINI_FS_STRUCTURES_SOURCES}
 )
 get_target_property(MINI_FS_MODULE_SOURCES mini-fs-module-lib SOURCES)
-list(APPEND MINI_FS_MODULE_SOURCES module.c)
+list(APPEND MINI_FS_MODULE_SOURCES mini-fs-module.c)
 
 string(REPLACE ";" " " MINI_FS_MODULE_SOURCES_STRING "${MINI_FS_MODULE_SOURCES}")
 configure_file(Kbuild.in Kbuild @ONLY)
