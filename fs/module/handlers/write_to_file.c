@@ -41,7 +41,7 @@ void write_to_file(int output_fd, const char* fs_path, uint16_t file_descr,
   uint16_t fin_block_shift = fin_layer_shift % BLOCK_SIZE;
 
   // get start inode_id
-  struct inode cur_inode;
+  struct fs_inode cur_inode;
   uint16_t cur_inode_id = dt.inode_id[file_descr];
   uint16_t prev_inode_id = 0;
 
@@ -67,7 +67,7 @@ void write_to_file(int output_fd, const char* fs_path, uint16_t file_descr,
   for (uint16_t i = 0; i <= fin_layer - start_layer; ++i) {
     // lazy inode allocation
     if (cur_inode_id == 0) {
-      struct inode new_inode;
+      struct fs_inode new_inode;
       reset_inode(&new_inode);
       new_inode.is_file = true;
       new_inode.size = 0;

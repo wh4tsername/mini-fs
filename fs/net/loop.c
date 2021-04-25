@@ -12,11 +12,11 @@
 #include <sys/socket.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <stdio.h>
 
 #include "../module/constants/opcodes.h"
 #include "log.h"
-
-#define FS_FILE "../../fs.bin"
 
 bool decode_commands(int fd) {
   enum OPCODE op;
@@ -27,6 +27,14 @@ bool decode_commands(int fd) {
   bool ret = true;
   uint16_t file_descr = 0;
   uint32_t pos = 0;
+
+  char test[100];
+  char test1[100];
+  test[0] = 'h';
+  test[1] = 'i';
+  test[2] = '\0';
+  int dev = -1;
+
   switch (op) {
     case FS_QUIT:
       log1("command: quit");
@@ -37,11 +45,25 @@ bool decode_commands(int fd) {
     case FS_INIT:
       log1("command: init");
 
+      dev = open("/dev/mini-fs", O_RDWR);
+      conditional_parse_errno(dev == -1);
+
+      write(dev, test, sizeof(test));
+      close(dev);
+
 //      init_fs(fd, FS_FILE);
       break;
 
     case FS_DESTROY:
       log1("command: destroy");
+
+      dev = open("/dev/mini-fs", O_RDWR);
+      conditional_parse_errno(dev == -1);
+
+      read(dev, test1, sizeof(test1));
+      close(dev);
+
+      log2("%s", test1);
 
 //      destroy_fs(fd, FS_FILE);
       break;

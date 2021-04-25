@@ -3,11 +3,11 @@
 
 #include "../structures/descriptor_table.h"
 #include "../structures/dir_record.h"
-#include "../structures/inode.h"
+#include "../structures/fs_inode.h"
 #include "../structures/superblock.h"
 
 #define SUPERBLOCK_SIZE (sizeof(struct superblock))
-#define INODE_SIZE (sizeof(struct inode))
+#define INODE_SIZE (sizeof(struct fs_inode))
 #define DIR_RECORD_SIZE (sizeof(struct dir_record))
 #define DESCRIPTOR_TABLE_SIZE (sizeof(struct descriptor_table))
 

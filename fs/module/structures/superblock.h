@@ -4,7 +4,7 @@
 #include "../constants/constants.h"
 #include <stdbool.h>
 
-#include "inode.h"
+#include "fs_inode.h"
 
 struct __attribute__((__packed__)) superblock {
   bool occupied_blocks_mask[NUM_BLOCKS];

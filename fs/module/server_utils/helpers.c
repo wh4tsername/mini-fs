@@ -11,7 +11,7 @@ uint16_t create_dir_block_and_inode(int fd, struct superblock* sb, bool is_root,
   uint16_t inode_id = occupy_inode(sb);
 
   // create inode
-  struct inode inode;
+  struct fs_inode inode;
   reset_inode(&inode);
   inode.block_ids[0] = block_id;
   inode.is_file = false;
@@ -33,15 +33,15 @@ uint16_t create_dir_block_and_inode(int fd, struct superblock* sb, bool is_root,
 }
 
 // traverse recursive
-void traverse_recursively(int fd, const char* path, struct inode* current,
-                          struct inode* res) {
+void traverse_recursively(int fd, const char* path, struct fs_inode* current,
+                          struct fs_inode* res) {
   cond_server_panic(current->is_file, "trying to enter file");
 
   char current_layer[MAX_PATH_LENGTH];
   char* remaining_path = parse_path(path, current_layer);
 
   if (strcmp(current_layer, "/") == 0) {
-    memcpy(res, current, sizeof(struct inode));
+    memcpy(res, current, sizeof(struct fs_inode));
   } else {
     struct dir_record records[16];
 
@@ -59,22 +59,22 @@ void traverse_recursively(int fd, const char* path, struct inode* current,
 
     cond_server_panic(!dir_found, "directory doesn't exist");
 
-    struct inode next;
+    struct fs_inode next;
     read_inode(fd, records[i].inode_id, &next);
 
     cond_server_panic(next.is_file, "trying to enter file");
 
     if (remaining_path == NULL) {
-      memcpy(res, &next, sizeof(struct inode));
+      memcpy(res, &next, sizeof(struct fs_inode));
     } else {
       traverse_recursively(fd, remaining_path, &next, res);
     }
   }
 }
 
-void traverse_path(int fd, const char* path, struct inode* res) {
+void traverse_path(int fd, const char* path, struct fs_inode* res) {
   // inode of "/" = 1
-  struct inode cur_inode;
+  struct fs_inode cur_inode;
   read_inode(fd, 1, &cur_inode);
 
   traverse_recursively(fd, path, &cur_inode, res);

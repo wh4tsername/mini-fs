@@ -5,7 +5,7 @@
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
-bool check_for_duplicate_file(int fd, struct inode* inode, uint16_t block_id,
+bool check_for_duplicate_file(int fd, struct fs_inode* inode, uint16_t block_id,
                               const char* name) {
   struct dir_record records[NUM_RECORDS_IN_DIR];
   read_dir_records(fd, block_id, records, inode->size);
@@ -33,7 +33,7 @@ void create_file(int output_fd, const char* fs_path, const char* path) {
   read_superblock(fd, &sb);
 
   // get inode of prev dir
-  struct inode prev_inode;
+  struct fs_inode prev_inode;
   reset_inode(&prev_inode);
   traverse_path(fd, path_to_traverse, &prev_inode);
 
@@ -51,7 +51,7 @@ void create_file(int output_fd, const char* fs_path, const char* path) {
   uint16_t inode_id = occupy_inode(&sb);
   uint16_t block_id = occupy_block(&sb);
 
-  struct inode inode;
+  struct fs_inode inode;
   reset_inode(&inode);
   inode.is_file = true;
   inode.block_ids[0] = block_id;

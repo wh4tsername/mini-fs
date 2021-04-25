@@ -8,7 +8,7 @@ void list_dir(int output_fd, const char* fs_path, const char* path) {
   int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
   cond_server_panic(fd == -1, "open error");
 
-  struct inode inode;
+  struct fs_inode inode;
   traverse_path(fd, path, &inode);
 
   uint16_t block_id = inode.block_ids[0];
@@ -18,7 +18,7 @@ void list_dir(int output_fd, const char* fs_path, const char* path) {
 
   dprintf(output_fd, "%u", (unsigned char)inode.size);
   for (uint16_t i = 0; i < inode.size; ++i) {
-    struct inode obj_inode;
+    struct fs_inode obj_inode;
     reset_inode(&obj_inode);
     read_inode(fd, records[i].inode_id, &obj_inode);
 

@@ -1,6 +1,6 @@
-#include "inode.h"
+#include "fs_inode.h"
 
-void reset_inode(struct inode* inode_pointer) {
+void reset_inode(struct fs_inode* inode_pointer) {
   for (int i = 0; i < NUM_BLOCK_IDS_IN_INODE; ++i) {
     inode_pointer->block_ids[i] = 0;
   }

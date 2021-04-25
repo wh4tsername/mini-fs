@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "../structures/inode.h"
+#include "../structures/fs_inode.h"
 #include "../structures/superblock.h"
 
 uint16_t create_dir_block_and_inode(int fd, struct superblock* sb, bool is_root,
                                     uint16_t prev_inode_id);
 
-void traverse_path(int fd, const char* path, struct inode* res);
+void traverse_path(int fd, const char* path, struct fs_inode* res);
 
 char* parse_path(const char* path, char* next_token);
 

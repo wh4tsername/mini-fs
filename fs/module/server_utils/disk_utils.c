@@ -32,7 +32,7 @@ void read_descriptor_table(int fd, struct descriptor_table* dt) {
                           -1);
 }
 
-void write_inode(int fd, uint16_t inode_id, const struct inode* inode) {
+void write_inode(int fd, uint16_t inode_id, const struct fs_inode* inode) {
   uint32_t offset =
       SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE + INODE_SIZE * (inode_id - 1);
 
@@ -44,7 +44,7 @@ void write_inode(int fd, uint16_t inode_id, const struct inode* inode) {
                           -1);
 }
 
-void read_inode(int fd, uint16_t inode_id, struct inode* inode) {
+void read_inode(int fd, uint16_t inode_id, struct fs_inode* inode) {
   uint32_t offset =
       SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE + INODE_SIZE * (inode_id - 1);
 
@@ -113,7 +113,7 @@ void erase_block(int fd, uint16_t block_id) {
 }
 
 void erase_inode(int fd, uint16_t inode_id) {
-  struct inode inode;
+  struct fs_inode inode;
   reset_inode(&inode);
 
   write_inode(fd, inode_id, &inode);

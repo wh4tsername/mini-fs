@@ -7,7 +7,7 @@
 
 #include "../structures/descriptor_table.h"
 #include "../structures/dir_record.h"
-#include "../structures/inode.h"
+#include "../structures/fs_inode.h"
 #include "../structures/superblock.h"
 
 void write_superblock(int fd, const struct superblock* sb);
@@ -18,9 +18,9 @@ void write_descriptor_table(int fd, struct descriptor_table* dt);
 
 void read_descriptor_table(int fd, struct descriptor_table* dt);
 
-void write_inode(int fd, uint16_t inode_id, const struct inode* inode);
+void write_inode(int fd, uint16_t inode_id, const struct fs_inode* inode);
 
-void read_inode(int fd, uint16_t inode_id, struct inode* inode);
+void read_inode(int fd, uint16_t inode_id, struct fs_inode* inode);
 
 void write_block(int fd, uint16_t block_id, uint16_t inblock_offset,
                  const char* buffer, int buffer_size);

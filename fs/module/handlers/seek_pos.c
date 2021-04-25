@@ -17,7 +17,7 @@ void seek_pos(int output_fd, const char* fs_path, uint16_t file_descr,
   read_descriptor_table(fd, &dt);
 
   // get offset
-  struct inode inode;
+  struct fs_inode inode;
   reset_inode(&inode);
   read_inode(fd, dt.inode_id[file_descr], &inode);
 

@@ -21,7 +21,7 @@ set(
 
 set(
         MINI_FS_STRUCTURES_SOURCES
-        structures/inode.c
+        structures/fs_inode.c
         structures/superblock.c
         structures/dir_record.c
         structures/descriptor_table.c

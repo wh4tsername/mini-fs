@@ -5,7 +5,7 @@
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
-bool check_for_file(int fd, struct inode* inode, uint16_t block_id,
+bool check_for_file(int fd, struct fs_inode* inode, uint16_t block_id,
                     const char* name, uint16_t* inode_id) {
   struct dir_record records[NUM_RECORDS_IN_DIR];
   read_dir_records(fd, block_id, records, inode->size);
@@ -29,7 +29,7 @@ void open_file(int output_fd, const char* fs_path, const char* path) {
   split_path(path, path_to_traverse, file_name);
 
   // get inode of prev dir
-  struct inode prev_inode;
+  struct fs_inode prev_inode;
   reset_inode(&prev_inode);
   traverse_path(fd, path_to_traverse, &prev_inode);
 
@@ -44,7 +44,7 @@ void open_file(int output_fd, const char* fs_path, const char* path) {
   cond_server_panic(!check_for_file(fd, &prev_inode, prev_inode.block_ids[0],
                                     file_name, &inode_id),
                     "file with such name doesn't exist");
-  struct inode file_inode;
+  struct fs_inode file_inode;
   reset_inode(&file_inode);
   read_inode(fd, inode_id, &file_inode);
 

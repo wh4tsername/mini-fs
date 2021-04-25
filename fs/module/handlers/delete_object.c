@@ -6,7 +6,7 @@
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
-bool check_if_obj_exists(int fd, struct inode* inode, uint16_t block_id,
+bool check_if_obj_exists(int fd, struct fs_inode* inode, uint16_t block_id,
                          const char* name, uint16_t* res_inode_id) {
   struct dir_record records[NUM_RECORDS_IN_DIR];
   read_dir_records(fd, block_id, records, inode->size);
@@ -22,7 +22,7 @@ bool check_if_obj_exists(int fd, struct inode* inode, uint16_t block_id,
 }
 
 // still need to write superblock
-void delete_file(int fd, struct superblock* sb, struct inode* inode,
+void delete_file(int fd, struct superblock* sb, struct fs_inode* inode,
                  uint16_t inode_id) {
   // delete children blocks
   for (uint16_t i = 0; i < NUM_BLOCK_IDS_IN_INODE; ++i) {
@@ -36,7 +36,7 @@ void delete_file(int fd, struct superblock* sb, struct inode* inode,
 
   // delete child inode
   if (inode->inode_id != 0) {
-    struct inode next_inode;
+    struct fs_inode next_inode;
     reset_inode(&next_inode);
     read_inode(fd, inode->inode_id, &next_inode);
 
@@ -49,7 +49,7 @@ void delete_file(int fd, struct superblock* sb, struct inode* inode,
 }
 
 // still need to write superblock
-void delete_directory(int fd, struct superblock* sb, struct inode* inode,
+void delete_directory(int fd, struct superblock* sb, struct fs_inode* inode,
                       uint16_t inode_id) {
   uint16_t block_id = inode->block_ids[0];
 
@@ -58,7 +58,7 @@ void delete_directory(int fd, struct superblock* sb, struct inode* inode,
 
   // delete children
   for (uint16_t i = 2; i < inode->size; ++i) {
-    struct inode child_inode;
+    struct fs_inode child_inode;
     reset_inode(&child_inode);
 
     read_inode(fd, records[i].inode_id, &child_inode);
@@ -95,7 +95,7 @@ void delete_object(int output_fd, const char* fs_path, const char* path) {
   read_superblock(fd, &sb);
 
   // get inode of prev dir
-  struct inode prev_inode;
+  struct fs_inode prev_inode;
   reset_inode(&prev_inode);
   traverse_path(fd, path_to_traverse, &prev_inode);
 
@@ -105,7 +105,7 @@ void delete_object(int output_fd, const char* fs_path, const char* path) {
       !check_if_obj_exists(fd, &prev_inode, prev_inode.block_ids[0], obj_name,
                            &inode_id),
       "directory or file with such name doesn't exist");
-  struct inode obj_inode;
+  struct fs_inode obj_inode;
   reset_inode(&obj_inode);
   read_inode(fd, inode_id, &obj_inode);
 
