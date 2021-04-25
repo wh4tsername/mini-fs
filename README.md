@@ -1,7 +1,13 @@
-## DESCRIPTION  
+### DESCRIPTION  
 Mini file system stored in `fs.bin` file  
+Mini file system can store files of unlimited capacity due to nested inodes  
 Mini fs has some capacity, which is easily increased by changing BLOCK_SIZE constant  
-## COMMANDS  
+### BUILD & EXECUTE
+Use CMakeLists.txt to build project  
+In build directory you will find server and client binaries:  
+- `./server port` - to run server  
+- `./client address:port` - to run client  
+### COMMANDS  
 `quit` - to quit mini-fs client  
 `init` - to initialise mini-fs  
 `ls /path/to/dir` - to show content of directory  
@@ -12,9 +18,9 @@ Mini fs has some capacity, which is easily increased by changing BLOCK_SIZE cons
 `seek file_descriptor pos` - to reposition read/write file offset  
 `write file_descriptor /path/to/real/file size` - to write to mini-fs file data from another file  
 `read file_descriptor /path/to/real/file size` - to read from mini-fs file data to another file  
-## TESTS  
+### TESTS  
 to launch tests run `./test/run.sh`  
-## USAGE LIMITS  
+### USAGE LIMITS  
 approximate max fs capacity = 500 kB  
 max number of files or subdirs in dir = 32  
 max dir or file name length = 14 symbols  
