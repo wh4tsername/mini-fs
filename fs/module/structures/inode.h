@@ -1,8 +1,8 @@
 #ifndef MINI_FS_FS_INODE_H_
 #define MINI_FS_FS_INODE_H_
 
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 #define NUM_BLOCK_IDS_IN_INODE 8
 
@@ -15,4 +15,4 @@ struct __attribute__((__packed__)) inode {
 
 void reset_inode(struct inode* inode_pointer);
 
-#endif //MINI_FS_FS_INODE_H_
+#endif  // MINI_FS_FS_INODE_H_

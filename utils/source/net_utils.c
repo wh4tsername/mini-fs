@@ -2,7 +2,6 @@
 
 #include <defines.h>
 #include <io_utils.h>
-
 #include <string.h>
 
 void send_opcode(int sockd, enum OPCODE op) {
@@ -18,8 +17,7 @@ void send_string(int sockd, const char* string) {
                            "error while sending string length");
 
   written = write_retry(sockd, string, (int)length);
-  conditional_handle_error(written != length,
-                           "error while sending string");
+  conditional_handle_error(written != length, "error while sending string");
 }
 
 void send_uint16_t(int sockd, uint16_t number) {
@@ -49,8 +47,7 @@ void recv_string(int sockd, char** string) {
   *string = malloc(length + 1);
 
   read = read_retry(sockd, *string, (int)length);
-  conditional_handle_error(read != length,
-                           "error while receiving string");
+  conditional_handle_error(read != length, "error while receiving string");
   (*string)[length] = '\0';
 }
 

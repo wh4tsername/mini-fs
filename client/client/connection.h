@@ -5,4 +5,4 @@ int establish_connection(const char* address_string);
 
 void close_connection(int sockd);
 
-#endif //MINI_FS_CLIENT_CONNECTION_H_
+#endif  // MINI_FS_CLIENT_CONNECTION_H_

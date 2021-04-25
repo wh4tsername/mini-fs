@@ -1,16 +1,14 @@
 #include "net_handlers.h"
 
 #include <constants/opcodes.h>
-#include <net_utils.h>
-
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/socket.h>
-#include <stdbool.h>
-#include <string.h>
-
 #include <defines.h>
+#include <fcntl.h>
+#include <net_utils.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <unistd.h>
 
 void output_results(int sockd) {
   const int BUFFER_SIZE = 10000;
@@ -20,18 +18,18 @@ void output_results(int sockd) {
   bool num_lines_is_set = false;
   long lines_counter = 0;
   while (!(num_lines_is_set && num_lines == lines_counter)) {
-//    dprintf(STDERR_FILENO, "num_lines: %ld\n", num_lines);
-//    dprintf(STDERR_FILENO, "counter: %ld\n", lines_counter);
-//    dprintf(STDERR_FILENO, "is_set: %d\n", num_lines_is_set);
+    //    dprintf(STDERR_FILENO, "num_lines: %ld\n", num_lines);
+    //    dprintf(STDERR_FILENO, "counter: %ld\n", lines_counter);
+    //    dprintf(STDERR_FILENO, "is_set: %d\n", num_lines_is_set);
 
     ssize_t read = recv(sockd, buffer, BUFFER_SIZE, 0);
     conditional_handle_error(read == -1, "results receiving error");
 
     buffer[read] = '\0';
 
-//    dprintf(STDERR_FILENO, "data: ");
-//    write(STDERR_FILENO, buffer, read);
-//    dprintf(STDERR_FILENO, "\n");
+    //    dprintf(STDERR_FILENO, "data: ");
+    //    write(STDERR_FILENO, buffer, read);
+    //    dprintf(STDERR_FILENO, "\n");
 
     char* buffer_start_pos = buffer;
     if (!num_lines_is_set && read >= 1) {
@@ -51,9 +49,9 @@ void output_results(int sockd) {
       write(STDOUT_FILENO, buffer_start_pos, read);
     }
 
-//    dprintf(STDERR_FILENO, "num_lines: %ld\n", num_lines);
-//    dprintf(STDERR_FILENO, "counter: %ld\n", lines_counter);
-//    dprintf(STDERR_FILENO, "is_set: %d\n", num_lines_is_set);
+    //    dprintf(STDERR_FILENO, "num_lines: %ld\n", num_lines);
+    //    dprintf(STDERR_FILENO, "counter: %ld\n", lines_counter);
+    //    dprintf(STDERR_FILENO, "is_set: %d\n", num_lines_is_set);
   }
 }
 
@@ -74,13 +72,9 @@ void output_read_result(int sockd, uint32_t size, int dest_fd) {
   free(buffer);
 }
 
-void send_init_fs(int sockd) {
-  send_opcode(sockd, FS_INIT);
-}
+void send_init_fs(int sockd) { send_opcode(sockd, FS_INIT); }
 
-void send_destroy_fs(int sockd) {
-  send_opcode(sockd, FS_DESTROY);
-}
+void send_destroy_fs(int sockd) { send_opcode(sockd, FS_DESTROY); }
 
 void send_list_dir(int sockd, const char* path) {
   send_opcode(sockd, FS_LS);
@@ -129,16 +123,17 @@ void send_seek_pos(int sockd, uint16_t file_descr, uint32_t pos) {
   send_uint32_t(sockd, pos);
 }
 
-void send_write_to_file(int sockd, uint16_t file_descr,
-                        const char* path, uint32_t size) {
+void send_write_to_file(int sockd, uint16_t file_descr, const char* path,
+                        uint32_t size) {
   send_opcode(sockd, FS_WRITE);
 
   send_uint16_t(sockd, file_descr);
 
   char* content = malloc(size + 1);
   int source_fd = open(path, O_RDONLY, S_IRUSR | S_IWUSR);
-  conditional_handle_error(read(source_fd, content, size) == -1,
-                           "error while reading from src file for write operation");
+  conditional_handle_error(
+      read(source_fd, content, size) == -1,
+      "error while reading from src file for write operation");
   content[size] = '\0';
 
   send_string(sockd, content);
@@ -149,8 +144,8 @@ void send_write_to_file(int sockd, uint16_t file_descr,
   send_uint32_t(sockd, size);
 }
 
-void send_read_from_file(int sockd, uint16_t file_descr,
-                         const char* path, uint32_t size) {
+void send_read_from_file(int sockd, uint16_t file_descr, const char* path,
+                         uint32_t size) {
   send_opcode(sockd, FS_READ);
 
   send_uint16_t(sockd, file_descr);
@@ -164,6 +159,4 @@ void send_read_from_file(int sockd, uint16_t file_descr,
   close(dest_fd);
 }
 
-void send_quit(int sockd) {
-  send_opcode(sockd, FS_QUIT);
-}
+void send_quit(int sockd) { send_opcode(sockd, FS_QUIT); }

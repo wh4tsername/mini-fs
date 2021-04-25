@@ -197,7 +197,7 @@ int server_loop(long port, int stop_fd) {
   return 0;
 }
 
-//int init_server(long port) {
+// int init_server(long port) {
 //  int fds[2];
 //  conditional_handle_error(pipe(fds) == -1, "pipe error");
 //  return server_loop(port, fds[0]);
@@ -234,8 +234,7 @@ int init_server(long port) {
         close(fds[1]);
         break;
       }
-      if (received_signal == SIGTERM ||
-          received_signal == SIGINT) {
+      if (received_signal == SIGTERM || received_signal == SIGINT) {
         log("got signal, stopping..", NULL);
 
         ssize_t written = write(fds[1], "!", 1);

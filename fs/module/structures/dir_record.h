@@ -12,4 +12,4 @@ struct __attribute__((__packed__)) dir_record {
 
 void reset_dir_record(struct dir_record* dir_record_pointer);
 
-#endif //MINI_FS_FS_DIR_RECORD_H_
+#endif  // MINI_FS_FS_DIR_RECORD_H_

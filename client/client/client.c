@@ -1,16 +1,15 @@
 #include "client.h"
 
-#include <stdlib.h>
-#include <string.h>
+#include <constants/commands.h>
+#include <constants/constants.h>
+#include <defines.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "net_handlers.h"
 #include "connection.h"
-
-#include <defines.h>
-#include <constants/constants.h>
-#include <constants/commands.h>
+#include "net_handlers.h"
 
 bool read_command(char* buffer, int buffer_size) {
   printf("mini-fs$ ");
@@ -160,8 +159,9 @@ int client_main(const char* address_string) {
     } else if (strcmp(cmd, WRITE_CMD) == 0) {
       // no arg check
       if (args == NULL || strlen(args) == 0) {
-        printf("write command requires file descriptor, "
-               "source file path and size args!\n");
+        printf(
+            "write command requires file descriptor, "
+            "source file path and size args!\n");
         continue;
       }
 
@@ -175,8 +175,9 @@ int client_main(const char* address_string) {
 
       // one arg check
       if (args == NULL || strlen(args) == 0) {
-        printf("write command requires file descriptor, "
-               "source file path and size args!\n");
+        printf(
+            "write command requires file descriptor, "
+            "source file path and size args!\n");
         continue;
       }
 
@@ -185,8 +186,9 @@ int client_main(const char* address_string) {
 
       // two arg check
       if (args == NULL || strlen(args) == 0) {
-        printf("write command requires file descriptor, "
-               "source file path and size args!\n");
+        printf(
+            "write command requires file descriptor, "
+            "source file path and size args!\n");
         continue;
       }
 
@@ -202,8 +204,9 @@ int client_main(const char* address_string) {
     } else if (strcmp(cmd, READ_CMD) == 0) {
       // no arg check
       if (args == NULL || strlen(args) == 0) {
-        printf("read command requires file descriptor, "
-               "source file path and size args!\n");
+        printf(
+            "read command requires file descriptor, "
+            "source file path and size args!\n");
         continue;
       }
 
@@ -217,8 +220,9 @@ int client_main(const char* address_string) {
 
       // one arg check
       if (args == NULL || strlen(args) == 0) {
-        printf("read command requires file descriptor, "
-               "source file path and size args!\n");
+        printf(
+            "read command requires file descriptor, "
+            "source file path and size args!\n");
         continue;
       }
 
@@ -227,8 +231,9 @@ int client_main(const char* address_string) {
 
       // two arg check
       if (args == NULL || strlen(args) == 0) {
-        printf("read command requires file descriptor, "
-               "source file path and size args!\n");
+        printf(
+            "read command requires file descriptor, "
+            "source file path and size args!\n");
         continue;
       }
 

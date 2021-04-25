@@ -1,6 +1,6 @@
-#include "client/client.h"
-
 #include <defines.h>
+
+#include "client/client.h"
 
 int main(int argc, char** argv) {
   if (argc != 2) {

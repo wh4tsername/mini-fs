@@ -14,4 +14,4 @@ void recv_string(int sockd, char** string);
 void recv_uint16_t(int sockd, uint16_t* number);
 void recv_uint32_t(int sockd, uint32_t* number);
 
-#endif //MINI_FS_UTILS_HEADERS_NET_UTILS_H_
+#endif  // MINI_FS_UTILS_HEADERS_NET_UTILS_H_

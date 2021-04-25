@@ -21,11 +21,11 @@ void send_close_file(int sockd, uint16_t file_descr);
 
 void send_seek_pos(int sockd, uint16_t file_descr, uint32_t pos);
 
-void send_write_to_file(int sockd, uint16_t file_descr,
-                        const char* path, uint32_t size);
+void send_write_to_file(int sockd, uint16_t file_descr, const char* path,
+                        uint32_t size);
 
-void send_read_from_file(int sockd, uint16_t file_descr,
-                         const char* path, uint32_t size);
+void send_read_from_file(int sockd, uint16_t file_descr, const char* path,
+                         uint32_t size);
 
 void send_quit(int sockd);
 

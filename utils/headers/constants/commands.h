@@ -14,4 +14,4 @@
 #define WRITE_CMD "write"
 #define READ_CMD "read"
 
-#endif //MINI_FS__COMMANDS_H_
+#endif  // MINI_FS__COMMANDS_H_

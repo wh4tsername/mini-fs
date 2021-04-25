@@ -1,9 +1,9 @@
 #ifndef MINI_FS_FS_SUPERBLOCK_H_
 #define MINI_FS_FS_SUPERBLOCK_H_
 
+#include <constants/constants.h>
 #include <stdbool.h>
 
-#include <constants/constants.h>
 #include "inode.h"
 
 struct __attribute__((__packed__)) superblock {
@@ -21,4 +21,4 @@ uint16_t occupy_inode(struct superblock* sb_pointer);
 
 void free_inode(struct superblock* sb_pointer, uint16_t inode_id);
 
-#endif //MINI_FS_FS_SUPERBLOCK_H_
+#endif  // MINI_FS_FS_SUPERBLOCK_H_

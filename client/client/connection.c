@@ -39,7 +39,7 @@ int establish_connection(const char* address_string) {
   addr.sin_port = htons(port);
 
   conditional_parse_errno(connect(sockd, (const struct sockaddr*)&addr,
-    sizeof(struct sockaddr_in)) == -1);
+                                  sizeof(struct sockaddr_in)) == -1);
 
   free(host);
 
