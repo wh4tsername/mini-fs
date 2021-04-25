@@ -2,7 +2,6 @@ set(
         FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/io_utils.c
         ${CMAKE_CURRENT_SOURCE_DIR}/net_utils.c
-        ${CMAKE_CURRENT_SOURCE_DIR}/string_utils.c
 )
 set(SUBDIRECTORIES "")
 set(RELATIVE_PATH source)

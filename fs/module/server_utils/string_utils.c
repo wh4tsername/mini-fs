@@ -1,5 +1,5 @@
 #include <string.h>
-#include "../../fs/module/server_utils/string_utils.h"
+#include "string_utils.h"
 
 int32_t find_last_occurrence(const char* str, char ch) {
   uint16_t length = strlen(str);

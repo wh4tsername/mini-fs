@@ -1,9 +1,9 @@
-#include <defines.h>
 #include "helpers.h"
 #include <string.h>
-#include <string_utils.h>
 
+#include "string_utils.h"
 #include "disk_utils.h"
+#include "module_defines.h"
 
 uint16_t create_dir_block_and_inode(int fd, struct superblock* sb, bool is_root,
                                     uint16_t prev_inode_id) {
@@ -35,7 +35,7 @@ uint16_t create_dir_block_and_inode(int fd, struct superblock* sb, bool is_root,
 // traverse recursive
 void traverse_recursively(int fd, const char* path, struct inode* current,
                           struct inode* res) {
-  conditional_handle_error(current->is_file, "trying to enter file");
+  cond_server_panic(current->is_file, "trying to enter file");
 
   char current_layer[MAX_PATH_LENGTH];
   char* remaining_path = parse_path(path, current_layer);
@@ -57,12 +57,12 @@ void traverse_recursively(int fd, const char* path, struct inode* current,
       }
     }
 
-    conditional_handle_error(!dir_found, "directory doesn't exist");
+    cond_server_panic(!dir_found, "directory doesn't exist");
 
     struct inode next;
     read_inode(fd, records[i].inode_id, &next);
 
-    conditional_handle_error(next.is_file, "trying to enter file");
+    cond_server_panic(next.is_file, "trying to enter file");
 
     if (remaining_path == NULL) {
       memcpy(res, &next, sizeof(struct inode));
@@ -82,7 +82,7 @@ void traverse_path(int fd, const char* path, struct inode* res) {
 
 char* parse_path(const char* path, char* next_token) {
   char* slash_pos = strchr(path, '/');
-  conditional_handle_error(slash_pos == NULL, "incorrect path");
+  cond_server_panic(slash_pos == NULL, "incorrect path");
 
   uint16_t path_length = strlen(path);
 
@@ -99,7 +99,7 @@ char* parse_path(const char* path, char* next_token) {
   } else {
     next_token_length = next_slash_pos - slash_pos - 1;
 
-    conditional_handle_error(next_token_length == 0, "incorrect path");
+    cond_server_panic(next_token_length == 0, "incorrect path");
   }
 
   memcpy(next_token, slash_pos + 1, next_token_length);
@@ -114,7 +114,7 @@ void split_path(const char* path, char* path_to_traverse, char* dir_name) {
   delete_last_slash_and_copy_res(path, path_length, buffer);
 
   uint16_t buffer_length = strlen(buffer);
-  conditional_handle_error(path[0] != '/' || buffer_length == 0,
+  cond_server_panic(path[0] != '/' || buffer_length == 0,
                            "incorrect path");
 
   int32_t last_slash_pos = find_last_occurrence(buffer, '/');
@@ -122,7 +122,7 @@ void split_path(const char* path, char* path_to_traverse, char* dir_name) {
          buffer_length - last_slash_pos - 1);
   dir_name[buffer_length - last_slash_pos - 1] = '\0';
 
-  conditional_handle_error(strlen(dir_name) == 0, "incorrect path");
+  cond_server_panic(strlen(dir_name) == 0, "incorrect path");
 
   memcpy(path_to_traverse, buffer, last_slash_pos + 1);
   path_to_traverse[last_slash_pos + 1] = '\0';

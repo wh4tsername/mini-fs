@@ -1,7 +1,7 @@
 #ifndef MINI_FS_UTILS_FS_CONSTANTS_H_
 #define MINI_FS_UTILS_FS_CONSTANTS_H_
 
-#include <constants/struct_sizes.h>
+#include "struct_sizes.h"
 
 #define FS_SIZE                                                        \
   (SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE + INODE_SIZE * NUM_INODES + \

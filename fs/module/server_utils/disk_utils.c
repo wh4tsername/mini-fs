@@ -1,9 +1,12 @@
 #include "disk_utils.h"
 
-#include <constants/constants.h>
-#include <constants/struct_sizes.h>
-#include <defines.h>
+#include "../constants/constants.h"
+#include "../constants/struct_sizes.h"
+#include "module_defines.h"
+
 #include <io_utils.h>
+#include <defines.h>
+
 #include <string.h>
 
 void write_superblock(int fd, const struct superblock* sb) {

@@ -1,6 +1,5 @@
 #include "loop.h"
 
-#include <constants/opcodes.h>
 #include <defines.h>
 #include <net_utils.h>
 #include <netdb.h>
@@ -14,7 +13,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#include "../module/handlers/handlers.h"
+#include "../module/constants/opcodes.h"
 #include "log.h"
 
 #define FS_FILE "../../fs.bin"
@@ -38,13 +37,13 @@ bool decode_commands(int fd) {
     case FS_INIT:
       log1("command: init");
 
-      init_fs(fd, FS_FILE);
+//      init_fs(fd, FS_FILE);
       break;
 
     case FS_DESTROY:
       log1("command: destroy");
 
-      destroy_fs(fd, FS_FILE);
+//      destroy_fs(fd, FS_FILE);
       break;
 
     case FS_LS:
@@ -52,7 +51,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      list_dir(fd, FS_FILE, path);
+//      list_dir(fd, FS_FILE, path);
       break;
 
     case FS_MKDIR:
@@ -60,7 +59,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      create_dir(fd, FS_FILE, path);
+//      create_dir(fd, FS_FILE, path);
       break;
 
     case FS_RM:
@@ -68,7 +67,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      delete_object(fd, FS_FILE, path);
+//      delete_object(fd, FS_FILE, path);
       break;
 
     case FS_TOUCH:
@@ -76,7 +75,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      create_file(fd, FS_FILE, path);
+//      create_file(fd, FS_FILE, path);
       break;
 
     case FS_OPEN:
@@ -84,7 +83,7 @@ bool decode_commands(int fd) {
 
       recv_string(fd, &path);
 
-      open_file(fd, FS_FILE, path);
+//      open_file(fd, FS_FILE, path);
       break;
 
     case FS_CLOSE:
@@ -92,7 +91,7 @@ bool decode_commands(int fd) {
 
       recv_uint16_t(fd, &file_descr);
 
-      close_file(fd, FS_FILE, file_descr);
+//      close_file(fd, FS_FILE, file_descr);
       break;
 
     case FS_SEEK:
@@ -101,7 +100,7 @@ bool decode_commands(int fd) {
       recv_uint16_t(fd, &file_descr);
       recv_uint32_t(fd, &pos);
 
-      seek_pos(fd, FS_FILE, file_descr, pos);
+//      seek_pos(fd, FS_FILE, file_descr, pos);
       break;
 
     case FS_WRITE:
@@ -114,7 +113,7 @@ bool decode_commands(int fd) {
       log2("file_descr: %d", file_descr);
       log2("size: %d", pos);
 
-      write_to_file(fd, FS_FILE, file_descr, data, pos);
+//      write_to_file(fd, FS_FILE, file_descr, data, pos);
       break;
 
     case FS_READ:
@@ -126,7 +125,7 @@ bool decode_commands(int fd) {
       log2("file_descr: %d", file_descr);
       log2("size: %d", pos);
 
-      read_from_file(fd, FS_FILE, file_descr, pos);
+//      read_from_file(fd, FS_FILE, file_descr, pos);
       break;
   }
 
@@ -183,7 +182,7 @@ int server_loop(long port, int stop_fd) {
     while (decode_commands(fd)) {
     }
 
-    log2("client disconnected", NULL);
+    log1("client disconnected");
 
     shutdown(fd, SHUT_RDWR);
     close(fd);
