@@ -135,10 +135,11 @@ void send_write_to_file(int sockd, uint16_t file_descr,
 
   send_uint16_t(sockd, file_descr);
 
-  char* content = malloc(size);
+  char* content = malloc(size + 1);
   int source_fd = open(path, O_RDONLY, S_IRUSR | S_IWUSR);
   conditional_handle_error(read(source_fd, content, size) == -1,
                            "error while reading from src file for write operation");
+  content[size] = '\0';
 
   send_string(sockd, content);
 

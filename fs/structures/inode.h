@@ -6,7 +6,7 @@
 
 #define NUM_BLOCK_IDS_IN_INODE 8
 
-struct inode {
+struct __attribute__((__packed__)) inode {
   uint16_t block_ids[NUM_BLOCK_IDS_IN_INODE];
   uint16_t inode_id;
   uint32_t size;

@@ -6,7 +6,7 @@
 
 #define NUM_DESCRIPTORS 16
 
-struct descriptor_table {
+struct __attribute__((__packed__)) descriptor_table {
   bool fd_mask[NUM_DESCRIPTORS];
   uint16_t inode_id[NUM_DESCRIPTORS];
   uint32_t pos[NUM_DESCRIPTORS];

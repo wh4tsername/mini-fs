@@ -6,7 +6,7 @@
 #include <constants/constants.h>
 #include "inode.h"
 
-struct superblock {
+struct __attribute__((__packed__)) superblock {
   bool occupied_blocks_mask[NUM_BLOCKS];
   bool occupied_inodes_mask[NUM_INODES];
 };

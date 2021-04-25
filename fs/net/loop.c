@@ -155,14 +155,18 @@ int server_loop(long port, int stop_fd) {
   {
     int fds[] = {stop_fd, connection_fd, -1};
     for (int* fd = fds; *fd != -1; ++fd) {
-      struct epoll_event event = {.events = EPOLLIN | EPOLLERR | EPOLLHUP,
-                                  .data = {.fd = *fd}};
+      struct epoll_event event;
+      memset(&event, 0, sizeof(struct epoll_event));
+      event.events = EPOLLIN | EPOLLERR | EPOLLHUP;
+      event.data.fd = *fd;
+
       epoll_ctl(epoll_fd, EPOLL_CTL_ADD, *fd, &event);
     }
   }
 
   while (true) {
     struct epoll_event event;
+    memset(&event, 0, sizeof(struct epoll_event));
     int epoll_ret = epoll_wait(epoll_fd, &event, 1, 1000);
     if (epoll_ret <= 0) {
       continue;
@@ -227,6 +231,7 @@ int init_server(long port) {
 
       if (received_signal == SIGCHLD) {
         log("got SIGCHLD, stopping...", NULL);
+        close(fds[1]);
         break;
       }
       if (received_signal == SIGTERM ||

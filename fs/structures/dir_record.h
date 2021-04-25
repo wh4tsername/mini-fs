@@ -5,7 +5,7 @@
 
 #define DIR_NAME_LENGTH 14
 
-struct dir_record {
+struct __attribute__((__packed__)) dir_record {
   uint16_t inode_id;
   char name[DIR_NAME_LENGTH];
 };
