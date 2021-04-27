@@ -8,6 +8,7 @@
 #include <linux/slab.h>
 
 #include "handlers/decode_execute.h"
+#include "constants/fs_constants.h"
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Denis Pominov");
@@ -15,6 +16,7 @@ MODULE_DESCRIPTION("Mini filesystem Linux module.");
 MODULE_VERSION("1.0");
 
 struct mini_fs_device {
+  char* memory;
   char* data;
   char* execute_results;
   struct semaphore sem;
@@ -27,7 +29,6 @@ int ret;
 dev_t dev_num;
 
 #define DEVICE_NAME "mini-fs"
-#define MAX_REQUEST_SIZE 11000
 
 int device_open(struct inode* inode, struct file* filp) {
   if (down_interruptible(&virtual_device.sem) != 0) {
@@ -105,13 +106,15 @@ static int driver_entry(void) {
 
   sema_init(&virtual_device.sem, 1);
 
-  virtual_device.data = kmalloc(MAX_REQUEST_SIZE, GFP_KERNEL);
-  virtual_device.execute_results = kmalloc(MAX_REQUEST_SIZE, GFP_KERNEL);
+  virtual_device.memory = kmalloc(FS_SIZE, GFP_KERNEL);
+  virtual_device.data = kmalloc(FS_SIZE, GFP_KERNEL);
+  virtual_device.execute_results = kmalloc(FS_SIZE, GFP_KERNEL);
 
   return 0;
 }
 
 static void driver_exit(void) {
+  kfree(virtual_device.memory);
   kfree(virtual_device.execute_results);
   kfree(virtual_device.data);
 

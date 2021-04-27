@@ -3,72 +3,66 @@
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
-#include <io_utils.h>
-
-void read_from_file(int output_fd, const char* fs_path, uint16_t file_descr,
-                    uint32_t size) {
-  int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
-  cond_server_panic(fd == -1, "open error");
-
+int read_from_file(char* results, char* memory, __u16 file_descr,
+                    __u32 size) {
   // get descriptor table
   struct descriptor_table dt;
-  reset_descriptor_table(&dt);
-  read_descriptor_table(fd, &dt);
+  check_ret_code(reset_descriptor_table(&dt));
+  check_ret_code(read_descriptor_table(memory, &dt));
 
   cond_server_panic(!dt.fd_mask[file_descr],
                     "trying to read from closed file descriptor");
 
   // calculate start offsets
-  uint16_t start_layer =
+  __u16 start_layer =
       dt.pos[file_descr] / (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
-  uint16_t start_layer_shift =
+  __u16 start_layer_shift =
       dt.pos[file_descr] % (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
 
-  uint16_t start_block_num = start_layer_shift / BLOCK_SIZE;
-  uint16_t start_block_shift = start_layer_shift % BLOCK_SIZE;
+  __u16 start_block_num = start_layer_shift / BLOCK_SIZE;
+  __u16 start_block_shift = start_layer_shift % BLOCK_SIZE;
 
   // calculate final offsets
-  uint16_t fin_layer =
+  __u16 fin_layer =
       (dt.pos[file_descr] + size) / (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
-  uint16_t fin_layer_shift =
+  __u16 fin_layer_shift =
       (dt.pos[file_descr] + size) % (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
 
-  uint16_t fin_block_num = fin_layer_shift / BLOCK_SIZE;
-  uint16_t fin_block_shift = fin_layer_shift % BLOCK_SIZE;
+  __u16 fin_block_num = fin_layer_shift / BLOCK_SIZE;
+  __u16 fin_block_shift = fin_layer_shift % BLOCK_SIZE;
 
   // get start inode_id
   struct fs_inode cur_inode;
-  uint16_t cur_inode_id = dt.inode_id[file_descr];
+  __u16 cur_inode_id = dt.inode_id[file_descr];
 
-  reset_inode(&cur_inode);
-  read_inode(fd, cur_inode_id, &cur_inode);
-  for (uint16_t i = 1; i <= start_layer; ++i) {
+  check_ret_code(reset_inode(&cur_inode));
+  check_ret_code(read_inode(memory, cur_inode_id, &cur_inode));
+  for (__u16 i = 1; i <= start_layer; ++i) {
     cur_inode_id = cur_inode.inode_id;
 
-    reset_inode(&cur_inode);
-    read_inode(fd, cur_inode_id, &cur_inode);
+    check_ret_code(reset_inode(&cur_inode));
+    check_ret_code(read_inode(memory, cur_inode_id, &cur_inode));
   }
 
   // check if read in bounds
   cond_server_panic(
-      (uint64_t)size > (uint64_t)cur_inode.size - (uint64_t)start_layer_shift,
+      (__u64)size > (__u64)cur_inode.size - (__u64)start_layer_shift,
       "read length is out of bounds");
   cond_server_panic(
-      (uint64_t)fin_layer_shift + (uint64_t)(fin_layer - start_layer) *
+      (__u64)fin_layer_shift + (__u64)(fin_layer - start_layer) *
                                       (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE) >
-          (uint64_t)cur_inode.size,
+          (__u64)cur_inode.size,
       "read length is out of bounds");
 
   // read recursively
-  char* buffer = malloc(BLOCK_SIZE);
-  for (uint16_t i = 0; i <= fin_layer - start_layer; ++i) {
+  for (__u16 i = 0; i <= fin_layer - start_layer; ++i) {
     // get inode
-    reset_inode(&cur_inode);
-    read_inode(fd, cur_inode_id, &cur_inode);
+    check_ret_code(reset_inode(&cur_inode));
+    check_ret_code(read_inode(memory, cur_inode_id, &cur_inode));
 
     // includes right bound
-    uint16_t left_block = 0;
-    uint16_t right_block = 0;
+    __u16 left_block = 0;
+    __u16 right_block = 0;
     if (i == 0) {
       left_block = start_block_num;
     } else {
@@ -82,10 +76,10 @@ void read_from_file(int output_fd, const char* fs_path, uint16_t file_descr,
     }
 
     // iterate blocks
-    for (uint16_t j = left_block; j <= right_block; ++j) {
+    for (__u16 j = left_block; j <= right_block; ++j) {
       // doesn't include right bound
-      uint16_t left_block_shift = 0;
-      uint16_t right_block_shift = 0;
+      __u16 left_block_shift = 0;
+      __u16 right_block_shift = 0;
       if (j == start_block_num && i == 0) {
         left_block_shift = start_block_shift;
       } else {
@@ -98,10 +92,9 @@ void read_from_file(int output_fd, const char* fs_path, uint16_t file_descr,
         right_block_shift = BLOCK_SIZE;
       }
 
-      read_block(fd, cur_inode.block_ids[j], left_block_shift, buffer,
-                 right_block_shift - left_block_shift);
-
-      write_retry(output_fd, buffer, right_block_shift - left_block_shift);
+      check_ret_code(read_block(memory, cur_inode.block_ids[j], left_block_shift, results,
+                 right_block_shift - left_block_shift));
+      int res_size = right_block_shift - left_block_shift;
     }
 
     cur_inode_id = cur_inode.inode_id;
@@ -111,9 +104,7 @@ void read_from_file(int output_fd, const char* fs_path, uint16_t file_descr,
   dt.pos[file_descr] += size;
 
   // write descriptor table
-  write_descriptor_table(fd, &dt);
+  check_ret_code(write_descriptor_table(memory, &dt));
 
-  free(buffer);
-
-  close(fd);
+  return 0;
 }

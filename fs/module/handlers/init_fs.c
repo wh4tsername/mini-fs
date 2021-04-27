@@ -1,37 +1,36 @@
+#include <linux/string.h>
+
 #include "../constants/constants.h"
 #include "../constants/fs_constants.h"
 #include "../server_utils/disk_utils.h"
 #include "../server_utils/helpers.h"
 #include "../server_utils/module_defines.h"
-#include "../structures/dir_record.h"
-#include "../structures/superblock.h"
 #include "handlers.h"
 
-void make_partition(int fd) {
+int make_partition(char* memory) {
   // create superblock
   struct superblock sb;
-  reset_superblock(&sb);
+  check_ret_code(reset_superblock(&sb));
 
-  create_dir_block_and_inode(fd, &sb, true, 0);
+  __u16 inode_id = 0;
+  check_ret_code(create_dir_block_and_inode(memory, &sb, true, 0, &inode_id));
 
   // write superblock
-  write_superblock(fd, &sb);
+  check_ret_code(write_superblock(memory, &sb));
 
   // create and write descriptor table
   struct descriptor_table dt;
-  reset_descriptor_table(&dt);
+  check_ret_code(reset_descriptor_table(&dt));
 
-  write_descriptor_table(fd, &dt);
+  check_ret_code(write_descriptor_table(memory, &dt));
+
+  return 0;
 }
 
-int init_fs(char* results, const char* fs_path) {
-  struct file* f =
-      filp_open(fs_path, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-  cond_server_panic(f == NULL, "open error");
+int init_fs(char* results, char* memory) {
+  memset(memory, 0, FS_SIZE);
 
-  ftruncate(f, FS_SIZE);
+  check_ret_code(make_partition(memory));
 
-  make_partition(f);
-
-  filp_close(f, NULL);
+  return 0;
 }

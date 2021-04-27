@@ -1,78 +1,75 @@
 #include "../constants/fs_constants.h"
-
 #include "../server_utils/disk_utils.h"
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
-void write_to_file(int output_fd, const char* fs_path, uint16_t file_descr,
-                   const char* data, uint32_t size) {
-  int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
-  cond_server_panic(fd == -1, "open error");
-
+int write_to_file(char* results, char* memory, __u16 file_descr,
+                  const char* data, __u32 size) {
   // get superblock
   struct superblock sb;
-  reset_superblock(&sb);
-  read_superblock(fd, &sb);
+  check_ret_code(reset_superblock(&sb));
+  check_ret_code(read_superblock(memory, &sb));
 
   // get descriptor table
   struct descriptor_table dt;
-  reset_descriptor_table(&dt);
-  read_descriptor_table(fd, &dt);
+  check_ret_code(reset_descriptor_table(&dt));
+  check_ret_code(read_descriptor_table(memory, &dt));
 
   cond_server_panic(!dt.fd_mask[file_descr],
                     "trying to write to closed file descriptor");
 
   // calculate start offsets
-  uint16_t start_layer =
+  __u16 start_layer =
       dt.pos[file_descr] / (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
-  uint16_t start_layer_shift =
+  __u16 start_layer_shift =
       dt.pos[file_descr] % (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
 
-  uint16_t start_block_num = start_layer_shift / BLOCK_SIZE;
-  uint16_t start_block_shift = start_layer_shift % BLOCK_SIZE;
+  __u16 start_block_num = start_layer_shift / BLOCK_SIZE;
+  __u16 start_block_shift = start_layer_shift % BLOCK_SIZE;
 
   // calculate final offsets
-  uint16_t fin_layer =
+  __u16 fin_layer =
       (dt.pos[file_descr] + size) / (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
-  uint16_t fin_layer_shift =
+  __u16 fin_layer_shift =
       (dt.pos[file_descr] + size) % (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
 
-  uint16_t fin_block_num = fin_layer_shift / BLOCK_SIZE;
-  uint16_t fin_block_shift = fin_layer_shift % BLOCK_SIZE;
+  __u16 fin_block_num = fin_layer_shift / BLOCK_SIZE;
+  __u16 fin_block_shift = fin_layer_shift % BLOCK_SIZE;
 
   // get start inode_id
   struct fs_inode cur_inode;
-  uint16_t cur_inode_id = dt.inode_id[file_descr];
-  uint16_t prev_inode_id = 0;
+  __u16 cur_inode_id = dt.inode_id[file_descr];
+  __u16 prev_inode_id = 0;
 
-  reset_inode(&cur_inode);
-  read_inode(fd, cur_inode_id, &cur_inode);
-  for (uint16_t i = 1; i <= start_layer; ++i) {
+  check_ret_code(reset_inode(&cur_inode));
+  check_ret_code(read_inode(memory, cur_inode_id, &cur_inode));
+  for (__u16 i = 1; i <= start_layer; ++i) {
     // update prev inode sizes
     cur_inode.size += size;
-    write_inode(fd, cur_inode_id, &cur_inode);
+    check_ret_code(write_inode(memory, cur_inode_id, &cur_inode));
 
     prev_inode_id = cur_inode_id;
     cur_inode_id = cur_inode.inode_id;
 
-    reset_inode(&cur_inode);
-    read_inode(fd, cur_inode_id, &cur_inode);
+    check_ret_code(reset_inode(&cur_inode));
+    check_ret_code(read_inode(memory, cur_inode_id, &cur_inode));
   }
 
   // write recursively
-  uint32_t buffer_pos = 0;
-  uint32_t left_size = size;
-  uint32_t cur_written = 0;
+  __u32 buffer_pos = 0;
+  __u32 left_size = size;
+  __u32 cur_written = 0;
   // iterate inodes
-  for (uint16_t i = 0; i <= fin_layer - start_layer; ++i) {
+  for (__u16 i = 0; i <= fin_layer - start_layer; ++i) {
     // lazy inode allocation
     if (cur_inode_id == 0) {
       struct fs_inode new_inode;
-      reset_inode(&new_inode);
+      check_ret_code(reset_inode(&new_inode));
       new_inode.is_file = true;
       new_inode.size = 0;
 
-      uint16_t new_inode_id = occupy_inode(&sb);
+      __u16 new_inode_id = 0;
+      check_ret_code(occupy_inode(&sb, &new_inode_id));
 
       // cur_inode here already prev
       cur_inode.inode_id = new_inode_id;
@@ -80,19 +77,19 @@ void write_to_file(int output_fd, const char* fs_path, uint16_t file_descr,
       cur_inode_id = new_inode_id;
 
       // update prev
-      write_inode(fd, prev_inode_id, &cur_inode);
+      check_ret_code(write_inode(memory, prev_inode_id, &cur_inode));
 
       // write new inode
-      write_inode(fd, new_inode_id, &new_inode);
+      check_ret_code(write_inode(memory, new_inode_id, &new_inode));
     }
 
     // get inode
-    reset_inode(&cur_inode);
-    read_inode(fd, cur_inode_id, &cur_inode);
+    check_ret_code(reset_inode(&cur_inode));
+    check_ret_code(read_inode(memory, cur_inode_id, &cur_inode));
 
     // includes right bound
-    uint16_t left_block = 0;
-    uint16_t right_block = 0;
+    __u16 left_block = 0;
+    __u16 right_block = 0;
     if (i == 0) {
       left_block = start_block_num;
     } else {
@@ -106,17 +103,18 @@ void write_to_file(int output_fd, const char* fs_path, uint16_t file_descr,
     }
 
     // iterate blocks
-    for (uint16_t j = left_block; j <= right_block; ++j) {
+    for (__u16 j = left_block; j <= right_block; ++j) {
       // lazy block allocation
       if (cur_inode.block_ids[j] == 0) {
-        uint16_t new_block_id = occupy_block(&sb);
+        __u16 new_block_id = 0;
+        check_ret_code(occupy_block(&sb, &new_block_id));
 
         cur_inode.block_ids[j] = new_block_id;
       }
 
       // doesn't include right bound
-      uint16_t left_block_shift = 0;
-      uint16_t right_block_shift = 0;
+      __u16 left_block_shift = 0;
+      __u16 right_block_shift = 0;
       if (j == start_block_num && i == 0) {
         left_block_shift = start_block_shift;
       } else {
@@ -129,8 +127,9 @@ void write_to_file(int output_fd, const char* fs_path, uint16_t file_descr,
         right_block_shift = BLOCK_SIZE;
       }
 
-      write_block(fd, cur_inode.block_ids[j], left_block_shift,
-                  data + buffer_pos, right_block_shift - left_block_shift);
+      check_ret_code(write_block(memory, cur_inode.block_ids[j],
+                                 left_block_shift, data + buffer_pos,
+                                 right_block_shift - left_block_shift));
 
       buffer_pos += right_block_shift - left_block_shift;
       cur_written += right_block_shift - left_block_shift;
@@ -144,7 +143,7 @@ void write_to_file(int output_fd, const char* fs_path, uint16_t file_descr,
     cur_written = 0;
 
     // update cur inode
-    write_inode(fd, cur_inode_id, &cur_inode);
+    check_ret_code(write_inode(memory, cur_inode_id, &cur_inode));
 
     // get next inode
     prev_inode_id = cur_inode_id;
@@ -155,10 +154,10 @@ void write_to_file(int output_fd, const char* fs_path, uint16_t file_descr,
   dt.pos[file_descr] += size;
 
   // write descriptor table
-  write_descriptor_table(fd, &dt);
+  check_ret_code(write_descriptor_table(memory, &dt));
 
   // write superblock
-  write_superblock(fd, &sb);
+  check_ret_code(write_superblock(memory, &sb));
 
-  close(fd);
+  return 0;
 }

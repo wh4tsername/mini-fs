@@ -32,10 +32,13 @@
   printk(KERN_INFO format, arg);    \
   printk(KERN_INFO "\n");
 
+//#define server_log1(msg)            \
+//  printk(KERN_INFO "SERVER LOG: "); \
+//  printk(KERN_INFO msg);            \
+//  printk(KERN_INFO "\n");
+
 #define server_log1(msg)            \
-  printk(KERN_INFO "SERVER LOG: "); \
-  printk(KERN_INFO msg);            \
-  printk(KERN_INFO "\n");
+  {}
 
 #define check_ret_code(stmt) \
   if ((stmt) < 0) {          \

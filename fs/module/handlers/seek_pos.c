@@ -1,33 +1,27 @@
 #include "../constants/fs_constants.h"
-#include "../server_utils/helpers.h"
-
 #include "../server_utils/disk_utils.h"
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
-void seek_pos(int output_fd, const char* fs_path, uint16_t file_descr,
-              uint32_t pos) {
-  int fd = open(fs_path, O_RDWR, S_IRUSR | S_IWUSR);
-  cond_server_panic(fd == -1, "open error");
-
+int seek_pos(char* results, char* memory, __u16 file_descr, __u32 pos) {
   // get descriptor table
   struct descriptor_table dt;
-  reset_descriptor_table(&dt);
+  check_ret_code(reset_descriptor_table(&dt));
 
-  read_descriptor_table(fd, &dt);
+  check_ret_code(read_descriptor_table(memory, &dt));
 
   // get offset
   struct fs_inode inode;
-  reset_inode(&inode);
-  read_inode(fd, dt.inode_id[file_descr], &inode);
+  check_ret_code(reset_inode(&inode));
+  check_ret_code(read_inode(memory, dt.inode_id[file_descr], &inode));
 
   cond_server_panic(pos >= inode.size, "position is out of bound");
 
   // change offset in descriptor table
-  change_pos(&dt, file_descr, pos);
+  check_ret_code(change_pos(&dt, file_descr, pos));
 
   // write descriptor table
-  write_descriptor_table(fd, &dt);
+  check_ret_code(write_descriptor_table(memory, &dt));
 
-  close(fd);
+  return 0;
 }
