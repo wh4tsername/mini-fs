@@ -2,7 +2,7 @@
 #define MINI_FS_FS_SUPERBLOCK_H_
 
 #include "../constants/constants.h"
-#include <stdbool.h>
+#include <linux/types.h>
 
 #include "fs_inode.h"
 
@@ -11,14 +11,14 @@ struct __attribute__((__packed__)) superblock {
   bool occupied_inodes_mask[NUM_INODES];
 };
 
-void reset_superblock(struct superblock* sb_pointer);
+int reset_superblock(struct superblock* sb_pointer);
 
-uint16_t occupy_block(struct superblock* sb_pointer);
+int occupy_block(struct superblock* sb_pointer, __u16* block_id);
 
-void free_block(struct superblock* sb_pointer, uint16_t block_id);
+int free_block(struct superblock* sb_pointer, __u16 block_id);
 
-uint16_t occupy_inode(struct superblock* sb_pointer);
+int occupy_inode(struct superblock* sb_pointer, __u16* block_id);
 
-void free_inode(struct superblock* sb_pointer, uint16_t inode_id);
+int free_inode(struct superblock* sb_pointer, __u16 inode_id);
 
 #endif  // MINI_FS_FS_SUPERBLOCK_H_

@@ -1,18 +1,19 @@
-#include <string.h>
+#include <linux/string.h>
 #include "string_utils.h"
 
-int32_t find_last_occurrence(const char* str, char ch) {
-  uint16_t length = strlen(str);
+int find_last_occurrence(const char* str, char ch, __s32* pos) {
+  __u16 length = strlen(str);
   for (int i = length - 1; i >= 0; --i) {
     if (*(str + i) == ch) {
-      return i;
+      *pos = i;
+      return 0;
     }
   }
 
   return -1;
 }
 
-void delete_last_slash_and_copy_res(const char* str, uint16_t str_length,
+int delete_last_slash_and_copy_res(const char* str, __u16 str_length,
                                     char* dest) {
   memcpy(dest, str, str_length);
   if (*(str + str_length - 1) != '/') {
@@ -20,4 +21,6 @@ void delete_last_slash_and_copy_res(const char* str, uint16_t str_length,
   } else {
     dest[str_length - 1] = '\0';
   }
+
+  return 0;
 }

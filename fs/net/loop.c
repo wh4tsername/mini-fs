@@ -15,8 +15,9 @@
 #include <fcntl.h>
 #include <stdio.h>
 
-#include "../module/constants/opcodes.h"
 #include "log.h"
+
+#define FS_DEVICE_FILE "/dev/mini-fs"
 
 bool decode_commands(int fd) {
   enum OPCODE op;
@@ -28,12 +29,10 @@ bool decode_commands(int fd) {
   uint16_t file_descr = 0;
   uint32_t pos = 0;
 
-  char test[100];
-  char test1[100];
-  test[0] = 'h';
-  test[1] = 'i';
-  test[2] = '\0';
-  int dev = -1;
+  int dev = open(FS_DEVICE_FILE, O_RDWR);
+  conditional_parse_errno(dev == -1);
+
+  send_opcode(dev, op);
 
   switch (op) {
     case FS_QUIT:
@@ -45,25 +44,11 @@ bool decode_commands(int fd) {
     case FS_INIT:
       log1("command: init");
 
-      dev = open("/dev/mini-fs", O_RDWR);
-      conditional_parse_errno(dev == -1);
-
-      write(dev, test, sizeof(test));
-      close(dev);
-
 //      init_fs(fd, FS_FILE);
       break;
 
     case FS_DESTROY:
       log1("command: destroy");
-
-      dev = open("/dev/mini-fs", O_RDWR);
-      conditional_parse_errno(dev == -1);
-
-      read(dev, test1, sizeof(test1));
-      close(dev);
-
-      log2("%s", test1);
 
 //      destroy_fs(fd, FS_FILE);
       break;
@@ -72,6 +57,7 @@ bool decode_commands(int fd) {
       log1("command: ls");
 
       recv_string(fd, &path);
+      send_string(dev, path);
 
 //      list_dir(fd, FS_FILE, path);
       break;
@@ -80,6 +66,7 @@ bool decode_commands(int fd) {
       log1("command: mkdir");
 
       recv_string(fd, &path);
+      send_string(dev, path);
 
 //      create_dir(fd, FS_FILE, path);
       break;
@@ -88,6 +75,7 @@ bool decode_commands(int fd) {
       log1("command: rm");
 
       recv_string(fd, &path);
+      send_string(dev, path);
 
 //      delete_object(fd, FS_FILE, path);
       break;
@@ -96,6 +84,7 @@ bool decode_commands(int fd) {
       log1("command: touch");
 
       recv_string(fd, &path);
+      send_string(dev, path);
 
 //      create_file(fd, FS_FILE, path);
       break;
@@ -104,6 +93,7 @@ bool decode_commands(int fd) {
       log1("command: open");
 
       recv_string(fd, &path);
+      send_string(dev, path);
 
 //      open_file(fd, FS_FILE, path);
       break;
@@ -112,6 +102,7 @@ bool decode_commands(int fd) {
       log1("command: close");
 
       recv_uint16_t(fd, &file_descr);
+      send_uint16_t(dev, file_descr);
 
 //      close_file(fd, FS_FILE, file_descr);
       break;
@@ -120,7 +111,9 @@ bool decode_commands(int fd) {
       log1("command: seek");
 
       recv_uint16_t(fd, &file_descr);
+      send_uint16_t(dev, file_descr);
       recv_uint32_t(fd, &pos);
+      send_uint32_t(dev, pos);
 
 //      seek_pos(fd, FS_FILE, file_descr, pos);
       break;
@@ -129,8 +122,11 @@ bool decode_commands(int fd) {
       log1("command: write");
 
       recv_uint16_t(fd, &file_descr);
+      send_uint16_t(dev, file_descr);
       recv_string(fd, &data);
+      send_string(dev, data);
       recv_uint32_t(fd, &pos);
+      send_uint32_t(dev, pos);
 
       log2("file_descr: %d", file_descr);
       log2("size: %d", pos);
@@ -142,7 +138,9 @@ bool decode_commands(int fd) {
       log1("command: read");
 
       recv_uint16_t(fd, &file_descr);
+      send_uint16_t(dev, file_descr);
       recv_uint32_t(fd, &pos);
+      send_uint32_t(dev, pos);
 
       log2("file_descr: %d", file_descr);
       log2("size: %d", pos);
@@ -153,6 +151,8 @@ bool decode_commands(int fd) {
 
   free(data);
   free(path);
+
+  close(dev);
 
   return ret;
 }

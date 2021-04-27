@@ -1,120 +1,128 @@
 #include "disk_utils.h"
 
+#include <linux/string.h>
+
 #include "../constants/constants.h"
 #include "../constants/struct_sizes.h"
+#include "fs_io_utils.h"
 #include "module_defines.h"
 
-#include <io_utils.h>
-#include <defines.h>
+int write_superblock(char* memory, const struct superblock* sb) {
+  write_retry(memory, (const char*)sb, SUPERBLOCK_SIZE, 0);
 
-#include <string.h>
-
-void write_superblock(int fd, const struct superblock* sb) {
-  lseek(fd, 0, SEEK_SET);
-  conditional_parse_errno(write_retry(fd, (const char*)sb, SUPERBLOCK_SIZE) ==
-                          -1);
+  return 0;
 }
 
-void read_superblock(int fd, struct superblock* sb) {
-  lseek(fd, 0, SEEK_SET);
-  conditional_parse_errno(read_retry(fd, (char*)sb, SUPERBLOCK_SIZE) == -1);
+int read_superblock(const char* memory, struct superblock* sb) {
+  read_retry(memory, (char*)sb, SUPERBLOCK_SIZE, 0);
+
+  return 0;
 }
 
-void write_descriptor_table(int fd, struct descriptor_table* dt) {
-  lseek(fd, SUPERBLOCK_SIZE, SEEK_SET);
-  conditional_parse_errno(
-      write_retry(fd, (const char*)dt, DESCRIPTOR_TABLE_SIZE) == -1);
+int write_descriptor_table(char* memory, const struct descriptor_table* dt) {
+  write_retry(memory, (const char*)dt, DESCRIPTOR_TABLE_SIZE, SUPERBLOCK_SIZE);
+
+  return 0;
 }
 
-void read_descriptor_table(int fd, struct descriptor_table* dt) {
-  lseek(fd, SUPERBLOCK_SIZE, SEEK_SET);
-  conditional_parse_errno(read_retry(fd, (char*)dt, DESCRIPTOR_TABLE_SIZE) ==
-                          -1);
+int read_descriptor_table(const char* memory, struct descriptor_table* dt) {
+  read_retry(memory, (char*)dt, DESCRIPTOR_TABLE_SIZE, SUPERBLOCK_SIZE);
+
+  return 0;
 }
 
-void write_inode(int fd, uint16_t inode_id, const struct fs_inode* inode) {
-  uint32_t offset =
+int write_inode(char* memory, __u16 inode_id, const struct fs_inode* inode) {
+  __u32 offset =
       SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE + INODE_SIZE * (inode_id - 1);
 
-  conditional_handle_error(inode_id > NUM_INODES || inode_id == 0,
-                           "incorrect inode_id");
+  cond_server_panic(inode_id > NUM_INODES || inode_id == 0,
+                    "incorrect inode_id");
+  write_retry(memory, (const char*)inode, INODE_SIZE, offset);
 
-  lseek(fd, offset, SEEK_SET);
-  conditional_parse_errno(write_retry(fd, (const char*)inode, INODE_SIZE) ==
-                          -1);
+  return 0;
 }
 
-void read_inode(int fd, uint16_t inode_id, struct fs_inode* inode) {
-  uint32_t offset =
+int read_inode(const char* memory, __u16 inode_id, struct fs_inode* inode) {
+  __u32 offset =
       SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE + INODE_SIZE * (inode_id - 1);
 
-  conditional_handle_error(inode_id > NUM_INODES || inode_id == 0,
-                           "incorrect inode_id");
+  cond_server_panic(inode_id > NUM_INODES || inode_id == 0,
+                    "incorrect inode_id");
 
-  lseek(fd, offset, SEEK_SET);
-  conditional_parse_errno(read_retry(fd, (char*)inode, INODE_SIZE) == -1);
+  read_retry(memory, (char*)inode, INODE_SIZE, offset);
+
+  return 0;
 }
 
-void write_block(int fd, uint16_t block_id, uint16_t inblock_offset,
-                 const char* buffer, int buffer_size) {
-  uint32_t offset = SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE +
-                    INODE_SIZE * NUM_INODES + BLOCK_SIZE * (block_id - 1) +
-                    inblock_offset;
+int write_block(char* memory, __u16 block_id, __u16 inblock_offset,
+                const char* buffer, int buffer_size) {
+  __u32 offset = SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE +
+                 INODE_SIZE * NUM_INODES + BLOCK_SIZE * (block_id - 1) +
+                 inblock_offset;
 
-  conditional_handle_error(block_id > NUM_BLOCKS || block_id == 0,
-                           "incorrect block_id");
-  conditional_handle_error(inblock_offset + buffer_size > BLOCK_SIZE,
-                           "write to block out of bounds");
+  cond_server_panic(block_id > NUM_BLOCKS || block_id == 0,
+                    "incorrect block_id");
+  cond_server_panic(inblock_offset + buffer_size > BLOCK_SIZE,
+                    "write to block out of bounds");
 
-  lseek(fd, offset, SEEK_SET);
-  conditional_parse_errno(write_retry(fd, buffer, buffer_size) == -1);
+  write_retry(memory, buffer, buffer_size, offset);
+
+  return 0;
 }
 
-void read_block(int fd, uint16_t block_id, uint16_t inblock_offset,
-                char* buffer, int buffer_size) {
-  uint32_t offset = SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE +
-                    INODE_SIZE * NUM_INODES + BLOCK_SIZE * (block_id - 1) +
-                    inblock_offset;
+int read_block(const char* memory, __u16 block_id, __u16 inblock_offset,
+               char* buffer, int buffer_size) {
+  __u32 offset = SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE +
+                 INODE_SIZE * NUM_INODES + BLOCK_SIZE * (block_id - 1) +
+                 inblock_offset;
 
-  conditional_handle_error(block_id > NUM_BLOCKS || block_id == 0,
-                           "incorrect block_id");
-  conditional_handle_error(inblock_offset + buffer_size > BLOCK_SIZE,
-                           "read from block out of bounds");
+  cond_server_panic(block_id > NUM_BLOCKS || block_id == 0,
+                    "incorrect block_id");
+  cond_server_panic(inblock_offset + buffer_size > BLOCK_SIZE,
+                    "read from block out of bounds");
 
-  lseek(fd, offset, SEEK_SET);
-  conditional_parse_errno(read_retry(fd, buffer, buffer_size) == -1);
+  read_retry(memory, buffer, buffer_size, offset);
+
+  return 0;
 }
 
-void write_dir_records(int fd, uint16_t block_id, struct dir_record* records,
-                       uint16_t num_records) {
-  for (uint16_t i = 0; i < num_records; ++i) {
-    write_block(fd, block_id, i * DIR_RECORD_SIZE, (const char*)&records[i],
-                DIR_RECORD_SIZE);
+int write_dir_records(char* memory, __u16 block_id, struct dir_record* records,
+                      __u16 num_records) {
+  for (__u16 i = 0; i < num_records; ++i) {
+    check_ret_code(write_block(memory, block_id, i * DIR_RECORD_SIZE,
+                               (const char*)&records[i], DIR_RECORD_SIZE));
   }
+
+  return 0;
 }
 
-void read_dir_records(int fd, uint16_t block_id, struct dir_record* records,
-                      uint16_t num_records) {
-  for (uint16_t i = 0; i < num_records; ++i) {
-    read_block(fd, block_id, i * DIR_RECORD_SIZE, (char*)&records[i],
-               DIR_RECORD_SIZE);
+int read_dir_records(const char* memory, __u16 block_id,
+                     struct dir_record* records, __u16 num_records) {
+  for (__u16 i = 0; i < num_records; ++i) {
+    check_ret_code(read_block(memory, block_id, i * DIR_RECORD_SIZE,
+                              (char*)&records[i], DIR_RECORD_SIZE));
   }
+
+  return 0;
 }
 
-void erase_block(int fd, uint16_t block_id) {
-  uint32_t size = BLOCK_SIZE;
+int erase_block(char* memory, __u16 block_id) {
+  __u32 offset = SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE +
+                 INODE_SIZE * NUM_INODES + BLOCK_SIZE * (block_id - 1);
 
-  char* buffer = malloc(size);
-  memset(buffer, '\0', size);
+  cond_server_panic(block_id > NUM_BLOCKS || block_id == 0,
+                    "incorrect block_id");
 
-  write_block(fd, block_id, 0, buffer, size);
+  memset(memory + offset, 0, BLOCK_SIZE);
 
-  free(buffer);
+  return 0;
 }
 
-void erase_inode(int fd, uint16_t inode_id) {
+int erase_inode(char* memory, __u16 inode_id) {
   struct fs_inode inode;
   reset_inode(&inode);
 
-  write_inode(fd, inode_id, &inode);
+  check_ret_code(write_inode(memory, inode_id, &inode));
+
+  return 0;
 }

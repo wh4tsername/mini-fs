@@ -1,20 +1,18 @@
 #ifndef MINI_FS_UTILS_HELPERS_H_
 #define MINI_FS_UTILS_HELPERS_H_
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <linux/types.h>
 
 #include "../structures/fs_inode.h"
 #include "../structures/superblock.h"
 
-uint16_t create_dir_block_and_inode(int fd, struct superblock* sb, bool is_root,
-                                    uint16_t prev_inode_id);
+int create_dir_block_and_inode(char* memory, struct superblock* sb, bool is_root,
+                                 __u16 prev_inode_id, __u16* ret_inode_id);
 
-void traverse_path(int fd, const char* path, struct fs_inode* res);
+int traverse_path(char* memory, const char* path, struct fs_inode* res);
 
-char* parse_path(const char* path, char* next_token);
+int parse_path(const char* path, char* next_token, char** res);
 
-void split_path(const char* path, char* path_to_traverse, char* dir_name);
+int split_path(const char* path, char* path_to_traverse, char* dir_name);
 
 #endif  // MINI_FS_UTILS_HELPERS_H_

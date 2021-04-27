@@ -22,6 +22,7 @@ In build directory you will find server and client binaries:
 to launch tests run `./test/run.sh`  
 ### USAGE LIMITS  
 approximate max fs capacity = 500 kB  
+data transfer max size = 10 kB
 max number of files or subdirs in dir = 32  
 max dir or file name length = 14 symbols  
 max path length = 256 symbols  

@@ -1,18 +1,18 @@
 #ifndef MINI_FS_FS_INODE_H_
 #define MINI_FS_FS_INODE_H_
 
-#include <stdbool.h>
-#include <stdint.h>
+#include <linux/types.h>
+#include "../server_utils/fs_types.h"
 
 #define NUM_BLOCK_IDS_IN_INODE 8
 
 struct __attribute__((__packed__)) fs_inode {
-  uint16_t block_ids[NUM_BLOCK_IDS_IN_INODE];
-  uint16_t inode_id;
-  uint32_t size;
+  __u16 block_ids[NUM_BLOCK_IDS_IN_INODE];
+  __u16 inode_id;
+  __u32 size;
   bool is_file;
 };
 
-void reset_inode(struct fs_inode* inode_pointer);
+int reset_inode(struct fs_inode* inode_pointer);
 
 #endif  // MINI_FS_FS_INODE_H_

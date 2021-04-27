@@ -1,41 +1,39 @@
 #ifndef MINI_FS__UTILS_H_
 #define MINI_FS__UTILS_H_
 
-#include <stdint.h>
-#include <stdlib.h>
-#include <unistd.h>
+#include <linux/types.h>
 
 #include "../structures/descriptor_table.h"
 #include "../structures/dir_record.h"
 #include "../structures/fs_inode.h"
 #include "../structures/superblock.h"
 
-void write_superblock(int fd, const struct superblock* sb);
+int write_superblock(char* memory, const struct superblock* sb);
 
-void read_superblock(int fd, struct superblock* sb);
+int read_superblock(const char* memory, struct superblock* sb);
 
-void write_descriptor_table(int fd, struct descriptor_table* dt);
+int write_descriptor_table(char* memory, const struct descriptor_table* dt);
 
-void read_descriptor_table(int fd, struct descriptor_table* dt);
+int read_descriptor_table(const char* memory, struct descriptor_table* dt);
 
-void write_inode(int fd, uint16_t inode_id, const struct fs_inode* inode);
+int write_inode(char* memory, __u16 inode_id, const struct fs_inode* inode);
 
-void read_inode(int fd, uint16_t inode_id, struct fs_inode* inode);
+int read_inode(const char* memory, __u16 inode_id, struct fs_inode* inode);
 
-void write_block(int fd, uint16_t block_id, uint16_t inblock_offset,
+int write_block(char* memory, __u16 block_id, __u16 inblock_offset,
                  const char* buffer, int buffer_size);
 
-void read_block(int fd, uint16_t block_id, uint16_t inblock_offset,
+int read_block(const char* memory, __u16 block_id, __u16 inblock_offset,
                 char* buffer, int buffer_size);
 
-void write_dir_records(int fd, uint16_t block_id, struct dir_record* records,
-                       uint16_t num_records);
+int write_dir_records(char* memory, __u16 block_id, struct dir_record* records,
+                       __u16 num_records);
 
-void read_dir_records(int fd, uint16_t block_id, struct dir_record* records,
-                      uint16_t num_records);
+int read_dir_records(const char* memory, __u16 block_id, struct dir_record* records,
+                      __u16 num_records);
 
-void erase_block(int fd, uint16_t block_id);
+int erase_block(char* memory, __u16 block_id);
 
-void erase_inode(int fd, uint16_t inode_id);
+int erase_inode(char* memory, __u16 inode_id);
 
 #endif  // MINI_FS__UTILS_H_

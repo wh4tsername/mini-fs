@@ -1,8 +1,7 @@
 #include "../constants/constants.h"
 #include "../constants/fs_constants.h"
-#include "../server_utils/helpers.h"
-
 #include "../server_utils/disk_utils.h"
+#include "../server_utils/helpers.h"
 #include "../server_utils/module_defines.h"
 #include "../structures/dir_record.h"
 #include "../structures/superblock.h"
@@ -25,13 +24,14 @@ void make_partition(int fd) {
   write_descriptor_table(fd, &dt);
 }
 
-void init_fs(int output_fd, const char* fs_path) {
-  int fd = open(fs_path, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-  cond_server_panic(fd == -1, "open error");
+int init_fs(char* results, const char* fs_path) {
+  struct file* f =
+      filp_open(fs_path, O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+  cond_server_panic(f == NULL, "open error");
 
-  ftruncate(fd, FS_SIZE);
+  ftruncate(f, FS_SIZE);
 
-  make_partition(fd);
+  make_partition(f);
 
-  close(fd);
+  filp_close(f, NULL);
 }

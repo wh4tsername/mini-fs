@@ -2,6 +2,8 @@ set(
         MINI_FS_SERVER_UTILS_SOURCES
         server_utils/disk_utils.c
         server_utils/helpers.c
+        server_utils/fs_io_utils.c
+        server_utils/device_utils.c
 )
 
 set(
@@ -17,6 +19,13 @@ set(
         handlers/seek_pos.c
         handlers/write_to_file.c
         handlers/read_from_file.c
+        handlers/decode_execute.c
+)
+
+set(
+        MINI_FS_HANDLER_HEADERS
+        handlers/handlers.h
+        handlers/decode_execute.h
 )
 
 set(
@@ -46,10 +55,13 @@ add_library(
         STATIC
         ${MINI_FS_SERVER_UTILS_SOURCES}
         ${MINI_FS_HANDLER_SOURCES}
+        ${MINI_FS_HANDLER_HEADERS}
         ${MINI_FS_STRUCTURES_SOURCES}
 )
 get_target_property(MINI_FS_MODULE_SOURCES mini-fs-module-lib SOURCES)
 list(APPEND MINI_FS_MODULE_SOURCES mini-fs-module.c)
+
+message("${MINI_FS_MODULE_SOURCES}")
 
 string(REPLACE ";" " " MINI_FS_MODULE_SOURCES_STRING "${MINI_FS_MODULE_SOURCES}")
 configure_file(Kbuild.in Kbuild @ONLY)

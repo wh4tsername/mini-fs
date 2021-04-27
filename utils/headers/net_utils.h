@@ -1,7 +1,7 @@
 #ifndef MINI_FS_UTILS_HEADERS_NET_UTILS_H_
 #define MINI_FS_UTILS_HEADERS_NET_UTILS_H_
 
-#include <constants/opcodes.h>
+#include "../../fs/module/constants/opcodes.h"
 #include <stdint.h>
 
 void send_opcode(int sockd, enum OPCODE op);

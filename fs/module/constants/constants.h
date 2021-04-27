@@ -1,8 +1,6 @@
 #ifndef MINI_FS_UTILS_CONSTANTS_H_
 #define MINI_FS_UTILS_CONSTANTS_H_
 
-#include <stdint.h>
-
 #define BLOCK_SIZE 1024
 
 // BLOCK_SIZE / DIR_RECORD_SIZE
