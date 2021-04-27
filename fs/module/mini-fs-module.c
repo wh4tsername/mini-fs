@@ -15,8 +15,6 @@ MODULE_AUTHOR("Denis Pominov");
 MODULE_DESCRIPTION("Mini filesystem Linux module.");
 MODULE_VERSION("1.0");
 
-//EXPORT_SYMBOL_NOVERS(decode_execute);
-
 struct mini_fs_device {
   char* memory;
   char* data;

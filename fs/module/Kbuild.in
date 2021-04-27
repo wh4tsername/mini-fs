@@ -1,2 +1,23 @@
 obj-m := mini-fs-module.o
-mymodule-objs := @MINI_FS_MODULE_SOURCES_STRING@
+mini-fs-module-objs := structures/fs_inode.o \
+                       structures/superblock.o \
+                       structures/dir_record.o \
+                       structures/descriptor_table.o \
+                       handlers/create_dir.o \
+                       handlers/init_fs.o \
+                       handlers/destroy_fs.o \
+                       handlers/list_dir.o \
+                       handlers/delete_object.o \
+                       handlers/create_file.o \
+                       handlers/open_file.o \
+                       handlers/close_file.o \
+                       handlers/seek_pos.o \
+                       handlers/write_to_file.o \
+                       handlers/read_from_file.o \
+                       handlers/decode_execute.o \
+                       server_utils/disk_utils.o \
+                       server_utils/helpers.o \
+                       server_utils/fs_io_utils.o \
+                       server_utils/string_utils.o
+
+ccflags-y += -std=gnu11

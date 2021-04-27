@@ -62,7 +62,8 @@ int open_file(char* results, char* memory, const char* path) {
   check_ret_code(read_descriptor_table(memory, &dt));
 
   // occupy file descriptor
-  __u16 descr = occupy_descriptor(&dt, inode_id);
+  __u16 descr = 0;
+  check_ret_code(occupy_descriptor(&dt, inode_id, &descr));
   //  dprintf(output_fd, "%u", (unsigned char)1);
   //  dprintf(output_fd, "fd: %hu\n", descr);
 
