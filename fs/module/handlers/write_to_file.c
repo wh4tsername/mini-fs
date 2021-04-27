@@ -20,21 +20,21 @@ int write_to_file(char* results, char* memory, __u16 file_descr,
 
   // calculate start offsets
   __u16 start_layer =
-      dt.pos[file_descr] / (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
+      dt.pos[file_descr] / (NUM_BLOCK_IDS_IN_INODE * FS_BLOCK_SIZE);
   __u16 start_layer_shift =
-      dt.pos[file_descr] % (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
+      dt.pos[file_descr] % (NUM_BLOCK_IDS_IN_INODE * FS_BLOCK_SIZE);
 
-  __u16 start_block_num = start_layer_shift / BLOCK_SIZE;
-  __u16 start_block_shift = start_layer_shift % BLOCK_SIZE;
+  __u16 start_block_num = start_layer_shift / FS_BLOCK_SIZE;
+  __u16 start_block_shift = start_layer_shift % FS_BLOCK_SIZE;
 
   // calculate final offsets
   __u16 fin_layer =
-      (dt.pos[file_descr] + size) / (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
+      (dt.pos[file_descr] + size) / (NUM_BLOCK_IDS_IN_INODE * FS_BLOCK_SIZE);
   __u16 fin_layer_shift =
-      (dt.pos[file_descr] + size) % (NUM_BLOCK_IDS_IN_INODE * BLOCK_SIZE);
+      (dt.pos[file_descr] + size) % (NUM_BLOCK_IDS_IN_INODE * FS_BLOCK_SIZE);
 
-  __u16 fin_block_num = fin_layer_shift / BLOCK_SIZE;
-  __u16 fin_block_shift = fin_layer_shift % BLOCK_SIZE;
+  __u16 fin_block_num = fin_layer_shift / FS_BLOCK_SIZE;
+  __u16 fin_block_shift = fin_layer_shift % FS_BLOCK_SIZE;
 
   // get start inode_id
   struct fs_inode cur_inode;
@@ -124,7 +124,7 @@ int write_to_file(char* results, char* memory, __u16 file_descr,
       if (j == fin_block_num && i == fin_layer - start_layer) {
         right_block_shift = fin_block_shift;
       } else {
-        right_block_shift = BLOCK_SIZE;
+        right_block_shift = FS_BLOCK_SIZE;
       }
 
       check_ret_code(write_block(memory, cur_inode.block_ids[j],

@@ -14,5 +14,3 @@ target_link_libraries(mini_fs_server PRIVATE utils)
 add_subdirectory(client)
 
 target_link_libraries(mini_fs_client PRIVATE utils)
-
-#target_link_libraries(mini-fs-module-lib PRIVATE utils)

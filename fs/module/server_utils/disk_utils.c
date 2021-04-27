@@ -57,12 +57,12 @@ int read_inode(const char* memory, __u16 inode_id, struct fs_inode* inode) {
 int write_block(char* memory, __u16 block_id, __u16 inblock_offset,
                 const char* buffer, int buffer_size) {
   __u32 offset = SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE +
-                 INODE_SIZE * NUM_INODES + BLOCK_SIZE * (block_id - 1) +
+                 INODE_SIZE * NUM_INODES + FS_BLOCK_SIZE * (block_id - 1) +
                  inblock_offset;
 
   cond_server_panic(block_id > NUM_BLOCKS || block_id == 0,
                     "incorrect block_id");
-  cond_server_panic(inblock_offset + buffer_size > BLOCK_SIZE,
+  cond_server_panic(inblock_offset + buffer_size > FS_BLOCK_SIZE,
                     "write to block out of bounds");
 
   write_retry(memory, buffer, buffer_size, offset);
@@ -73,12 +73,12 @@ int write_block(char* memory, __u16 block_id, __u16 inblock_offset,
 int read_block(const char* memory, __u16 block_id, __u16 inblock_offset,
                char* buffer, int buffer_size) {
   __u32 offset = SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE +
-                 INODE_SIZE * NUM_INODES + BLOCK_SIZE * (block_id - 1) +
+                 INODE_SIZE * NUM_INODES + FS_BLOCK_SIZE * (block_id - 1) +
                  inblock_offset;
 
   cond_server_panic(block_id > NUM_BLOCKS || block_id == 0,
                     "incorrect block_id");
-  cond_server_panic(inblock_offset + buffer_size > BLOCK_SIZE,
+  cond_server_panic(inblock_offset + buffer_size > FS_BLOCK_SIZE,
                     "read from block out of bounds");
 
   read_retry(memory, buffer, buffer_size, offset);
@@ -108,12 +108,12 @@ int read_dir_records(const char* memory, __u16 block_id,
 
 int erase_block(char* memory, __u16 block_id) {
   __u32 offset = SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE +
-                 INODE_SIZE * NUM_INODES + BLOCK_SIZE * (block_id - 1);
+                 INODE_SIZE * NUM_INODES + FS_BLOCK_SIZE * (block_id - 1);
 
   cond_server_panic(block_id > NUM_BLOCKS || block_id == 0,
                     "incorrect block_id");
 
-  memset(memory + offset, 0, BLOCK_SIZE);
+  memset(memory + offset, 0, FS_BLOCK_SIZE);
 
   return 0;
 }

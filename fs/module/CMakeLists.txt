@@ -1,9 +1,27 @@
 set(
+        MINI_FS_CONSTANTS_HEADERS
+        constants/constants.h
+        constants/fs_constants.h
+        constants/opcodes.h
+        constants/struct_sizes.h
+)
+
+set(
         MINI_FS_SERVER_UTILS_SOURCES
         server_utils/disk_utils.c
         server_utils/helpers.c
         server_utils/fs_io_utils.c
-        server_utils/device_utils.c
+        server_utils/string_utils.c
+)
+
+set(
+        MINI_FS_SERVER_UTILS_HEADERS
+        server_utils/disk_utils.h
+        server_utils/helpers.h
+        server_utils/fs_io_utils.h
+        server_utils/string_utils.h
+        server_utils/fs_types.h
+        server_utils/module_defines.h
 )
 
 set(
@@ -36,6 +54,15 @@ set(
         structures/descriptor_table.c
 )
 
+set(
+        MINI_FS_STRUCTURES_HEADERS
+        structures/fs_inode.h
+        structures/superblock.h
+        structures/dir_record.h
+        structures/descriptor_table.h
+)
+
+
 set(KERNEL_DIR "" CACHE STRING "Path to the kernel build directory")
 
 if("${KERNEL_DIR}" STREQUAL "")
@@ -53,10 +80,13 @@ endif()
 add_library(
         mini-fs-module-lib
         STATIC
+        ${MINI_FS_CONSTANTS_HEADERS}
         ${MINI_FS_SERVER_UTILS_SOURCES}
+        ${MINI_FS_SERVER_UTILS_HEADERS}
         ${MINI_FS_HANDLER_SOURCES}
         ${MINI_FS_HANDLER_HEADERS}
         ${MINI_FS_STRUCTURES_SOURCES}
+        ${MINI_FS_STRUCTURES_HEADERS}
 )
 get_target_property(MINI_FS_MODULE_SOURCES mini-fs-module-lib SOURCES)
 list(APPEND MINI_FS_MODULE_SOURCES mini-fs-module.c)

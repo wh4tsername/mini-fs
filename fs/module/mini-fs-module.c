@@ -15,6 +15,8 @@ MODULE_AUTHOR("Denis Pominov");
 MODULE_DESCRIPTION("Mini filesystem Linux module.");
 MODULE_VERSION("1.0");
 
+//EXPORT_SYMBOL_NOVERS(decode_execute);
+
 struct mini_fs_device {
   char* memory;
   char* data;
@@ -50,7 +52,7 @@ ssize_t device_read(struct file* filp, char* buffer, size_t size,
     return ret;
   }
 
-  if (decode_execute(virtual_device.data, virtual_device.execute_results) < 0) {
+  if (decode_execute(virtual_device.data, virtual_device.memory, virtual_device.execute_results) < 0) {
     return -1;
   }
 

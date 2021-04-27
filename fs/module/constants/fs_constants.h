@@ -5,7 +5,7 @@
 
 #define FS_SIZE                                                        \
   (SUPERBLOCK_SIZE + DESCRIPTOR_TABLE_SIZE + INODE_SIZE * NUM_INODES + \
-   BLOCK_SIZE * NUM_BLOCKS)  // in bytes
+   FS_BLOCK_SIZE * NUM_BLOCKS)  // in bytes
 
 #define FS_FILE "/root/fs.bin"
 

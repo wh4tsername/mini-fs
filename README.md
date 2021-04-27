@@ -1,7 +1,7 @@
 ### DESCRIPTION  
 Mini file system stored in `fs.bin` file  
 Mini file system can store files of unlimited capacity due to nested inodes  
-Mini fs has some capacity, which is easily increased by changing BLOCK_SIZE constant  
+Mini fs has some capacity, which is easily increased by changing FS_BLOCK_SIZE constant  
 ### BUILD & EXECUTE
 Use CMakeLists.txt to build project  
 In build directory you will find server and client binaries:  
