@@ -5,21 +5,19 @@
 #include <netdb.h>
 #include <signal.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <sys/epoll.h>
-#include <sys/socket.h>
 #include <sys/wait.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <stdio.h>
 
 #include "log.h"
 
+#include "../module/constants/fs_constants.h"
+
 #define FS_DEVICE_FILE "/dev/mini-fs"
 
-bool decode_commands(int fd) {
+bool decode_commands(int fd, char* request) {
   enum OPCODE op;
   recv_opcode(fd, &op);
 
@@ -32,7 +30,12 @@ bool decode_commands(int fd) {
   int dev = open(FS_DEVICE_FILE, O_RDWR);
   conditional_parse_errno(dev == -1);
 
-  send_opcode(dev, op);
+//  send_opcode(dev, op);
+  char* request_it = request;
+  *request_it = op;
+  ++request_it;
+
+  size_t path_len = 0;
 
   switch (op) {
     case FS_QUIT:
@@ -44,108 +47,165 @@ bool decode_commands(int fd) {
     case FS_INIT:
       log1("command: init");
 
-//      init_fs(fd, FS_FILE);
+      write(dev, request, FS_SIZE);
       break;
 
     case FS_DESTROY:
       log1("command: destroy");
 
-//      destroy_fs(fd, FS_FILE);
+      write(dev, request, FS_SIZE);
       break;
 
     case FS_LS:
       log1("command: ls");
 
       recv_string(fd, &path);
-      send_string(dev, path);
 
-//      list_dir(fd, FS_FILE, path);
+      path_len = strlen(path);
+      memcpy(request_it, path, path_len + 1);
+      request_it += path_len;
+
+      write(dev, request, FS_SIZE);
       break;
 
     case FS_MKDIR:
       log1("command: mkdir");
 
       recv_string(fd, &path);
-      send_string(dev, path);
 
-//      create_dir(fd, FS_FILE, path);
+      path_len = strlen(path);
+      memcpy(request_it, path, path_len + 1);
+      request_it += path_len;
+
+      write(dev, request, FS_SIZE);
       break;
 
     case FS_RM:
       log1("command: rm");
 
       recv_string(fd, &path);
-      send_string(dev, path);
 
-//      delete_object(fd, FS_FILE, path);
+      path_len = strlen(path);
+      memcpy(request_it, path, path_len + 1);
+      request_it += path_len;
+
+      write(dev, request, FS_SIZE);
       break;
 
     case FS_TOUCH:
       log1("command: touch");
 
       recv_string(fd, &path);
-      send_string(dev, path);
 
-//      create_file(fd, FS_FILE, path);
+      path_len = strlen(path);
+      memcpy(request_it, path, path_len + 1);
+      request_it += path_len;
+
+      ssize_t res = write(dev, request, FS_SIZE);
+      if (res == -1) {
+        log1("ERROR");
+      }
       break;
 
     case FS_OPEN:
       log1("command: open");
 
       recv_string(fd, &path);
-      send_string(dev, path);
 
-//      open_file(fd, FS_FILE, path);
+      path_len = strlen(path);
+      memcpy(request_it, path, path_len + 1);
+      request_it += path_len;
+
+      write(dev, request, FS_SIZE);
+
+//      sprintf(request, "%u", (unsigned char)1);
+      read(dev, request, FS_SIZE);
+
+//      printf("%s", request);
+
+      dprintf(fd, "%u", (unsigned char)1);
+      dprintf(fd, "%s", request);
+//      send_string(fd, request);
       break;
 
     case FS_CLOSE:
       log1("command: close");
 
       recv_uint16_t(fd, &file_descr);
-      send_uint16_t(dev, file_descr);
 
-//      close_file(fd, FS_FILE, file_descr);
+      memcpy(request_it, &file_descr, sizeof(uint16_t));
+      request_it += sizeof(uint16_t);
+
+      write(dev, request, FS_SIZE);
       break;
 
     case FS_SEEK:
       log1("command: seek");
 
       recv_uint16_t(fd, &file_descr);
-      send_uint16_t(dev, file_descr);
-      recv_uint32_t(fd, &pos);
-      send_uint32_t(dev, pos);
 
-//      seek_pos(fd, FS_FILE, file_descr, pos);
+      memcpy(request_it, &file_descr, sizeof(uint16_t));
+      request_it += sizeof(uint16_t);
+
+      recv_uint32_t(fd, &pos);
+
+      memcpy(request_it, &pos, sizeof(uint32_t));
+      request_it += sizeof(uint32_t);
+
+      write(dev, request, FS_SIZE);
       break;
 
     case FS_WRITE:
       log1("command: write");
 
       recv_uint16_t(fd, &file_descr);
-      send_uint16_t(dev, file_descr);
+
+      memcpy(request_it, &file_descr, sizeof(uint16_t));
+      request_it += sizeof(uint16_t);
+
       recv_string(fd, &data);
-      send_string(dev, data);
+
+      path_len = strlen(data);
+      memcpy(request_it, data, path_len + 1);
+      request_it += path_len + 1;
+
       recv_uint32_t(fd, &pos);
-      send_uint32_t(dev, pos);
+
+      memcpy(request_it, &pos, sizeof(uint32_t));
+      request_it += sizeof(uint32_t);
 
       log2("file_descr: %d", file_descr);
       log2("size: %d", pos);
 
-//      write_to_file(fd, FS_FILE, file_descr, data, pos);
+      write(dev, request, FS_SIZE);
+
+//      dprintf(STDERR_FILENO, "%s", request);
+//      fflush(stderr);
+
+//      dprintf(fd, "%s", request);
       break;
 
     case FS_READ:
       log1("command: read");
 
       recv_uint16_t(fd, &file_descr);
-      send_uint16_t(dev, file_descr);
+
+      memcpy(request_it, &file_descr, sizeof(uint16_t));
+      request_it += sizeof(uint16_t);
+
       recv_uint32_t(fd, &pos);
-      send_uint32_t(dev, pos);
+
+      memcpy(request_it, &pos, sizeof(uint32_t));
+      request_it += sizeof(uint32_t);
 
       log2("file_descr: %d", file_descr);
       log2("size: %d", pos);
 
-//      read_from_file(fd, FS_FILE, file_descr, pos);
+      write(dev, request, FS_SIZE);
+      read(dev, request, FS_SIZE);
+
+      write(fd, request, pos);
+
       break;
   }
 
@@ -185,6 +245,8 @@ int server_loop(long port, int stop_fd) {
     }
   }
 
+  char* request = malloc(FS_SIZE);
+
   while (true) {
     struct epoll_event event;
     memset(&event, 0, sizeof(struct epoll_event));
@@ -201,7 +263,7 @@ int server_loop(long port, int stop_fd) {
 
     log1("client connected");
 
-    while (decode_commands(fd)) {
+    while (decode_commands(fd, request)) {
     }
 
     log1("client disconnected");
@@ -209,6 +271,8 @@ int server_loop(long port, int stop_fd) {
     shutdown(fd, SHUT_RDWR);
     close(fd);
   }
+
+  free(request);
 
   close(epoll_fd);
 

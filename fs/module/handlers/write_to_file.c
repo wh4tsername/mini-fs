@@ -3,6 +3,13 @@
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
 int write_to_file(char* results, char* memory, __u16 file_descr,
                   const char* data, __u32 size) {
   // get superblock

@@ -6,9 +6,10 @@
 #include <linux/semaphore.h>
 #include <linux/uaccess.h>
 #include <linux/slab.h>
+#include <linux/string.h>
 
-#include "handlers/decode_execute.h"
-#include "constants/fs_constants.h"
+#include "../handlers/decode_execute.h"
+#include "../constants/fs_constants.h"
 
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Denis Pominov");
@@ -44,15 +45,9 @@ ssize_t device_read(struct file* filp, char* buffer, size_t size,
                     loff_t* offset) {
   printk(KERN_INFO "mini-fs: reading from device");
 
-  ret = copy_to_user(buffer, virtual_device.data, size);
+  ret = copy_to_user(buffer, virtual_device.execute_results, size);
 
-  if (ret < 0) {
-    return ret;
-  }
-
-  if (decode_execute(virtual_device.data, virtual_device.memory, virtual_device.execute_results) < 0) {
-    return -1;
-  }
+  printk(KERN_INFO "%s", virtual_device.execute_results);
 
   return ret;
 }
@@ -61,7 +56,16 @@ ssize_t device_write(struct file* filp, const char* buffer, size_t size,
                      loff_t* offset) {
   printk(KERN_INFO "mini-fs: writing to device");
 
-  ret = copy_from_user(virtual_device.execute_results, buffer, size);
+  memset(virtual_device.execute_results, 0, FS_SIZE);
+  ret = copy_from_user(virtual_device.data, buffer, size);
+
+  if (ret < 0) {
+    return ret;
+  }
+
+  if (decode_execute(virtual_device.memory, virtual_device.data, virtual_device.execute_results) < 0) {
+    return -1;
+  }
 
   return ret;
 }

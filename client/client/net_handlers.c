@@ -1,6 +1,7 @@
 #include "net_handlers.h"
 
-#include <constants/opcodes.h>
+#include "../../fs/module/constants/opcodes.h"
+
 #include <defines.h>
 #include <fcntl.h>
 #include <net_utils.h>

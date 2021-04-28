@@ -2,6 +2,6 @@
 #define MINI_FS__CLIENT_H_
 
 // client main
-int client_main(const char* address_string);
+int client(const char* address_string);
 
 #endif  // MINI_FS__CLIENT_H_

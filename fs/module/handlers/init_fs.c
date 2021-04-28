@@ -7,6 +7,13 @@
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
 int make_partition(char* memory) {
   // create superblock
   struct superblock sb;

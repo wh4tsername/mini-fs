@@ -2,6 +2,13 @@
 
 #include "../server_utils/module_defines.h"
 
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
 int reset_descriptor_table(struct descriptor_table* dt) {
   for (__u16 i = 0; i < NUM_DESCRIPTORS; ++i) {
     dt->fd_mask[i] = false;

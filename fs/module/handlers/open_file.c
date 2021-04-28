@@ -6,6 +6,15 @@
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
+#include <linux/kernel.h>
+
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
 int check_for_file(char* memory, struct fs_inode* inode, __u16 block_id,
                    const char* name, __u16* inode_id, bool* file_exists) {
   struct dir_record records[NUM_RECORDS_IN_DIR];
@@ -64,8 +73,9 @@ int open_file(char* results, char* memory, const char* path) {
   // occupy file descriptor
   __u16 descr = 0;
   check_ret_code(occupy_descriptor(&dt, inode_id, &descr));
-  //  dprintf(output_fd, "%u", (unsigned char)1);
-  //  dprintf(output_fd, "fd: %hu\n", descr);
+
+  sprintf(results, "%u", (unsigned char)1);
+  sprintf(results, "fd: %hu\n", descr);
 
   // write descriptor table
   write_descriptor_table(memory, &dt);

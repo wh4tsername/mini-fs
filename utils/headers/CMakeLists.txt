@@ -3,6 +3,7 @@ set(
         ${CMAKE_CURRENT_SOURCE_DIR}/defines.h
         ${CMAKE_CURRENT_SOURCE_DIR}/io_utils.h
         ${CMAKE_CURRENT_SOURCE_DIR}/net_utils.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/commands.h
 )
 set(SUBDIRECTORIES "")
 set(RELATIVE_PATH headers)

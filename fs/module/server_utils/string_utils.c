@@ -1,6 +1,13 @@
 #include <linux/string.h>
 #include "string_utils.h"
 
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
 int find_last_occurrence(const char* str, char ch, __s32* pos) {
   __u16 length = strlen(str);
   for (int i = length - 1; i >= 0; --i) {

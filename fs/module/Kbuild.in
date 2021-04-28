@@ -1,3 +1,6 @@
+CONFIG_MODULE_SIG=n
+CONFIG_MODULE_SIG_ALL=n
+
 obj-m := mini-fs-module.o
 mini-fs-module-objs := structures/fs_inode.o \
                        structures/superblock.o \
@@ -18,6 +21,7 @@ mini-fs-module-objs := structures/fs_inode.o \
                        server_utils/disk_utils.o \
                        server_utils/helpers.o \
                        server_utils/fs_io_utils.o \
-                       server_utils/string_utils.o
+                       server_utils/string_utils.o \
+                       module/mini-fs-module.o
 
 ccflags-y += -std=gnu11

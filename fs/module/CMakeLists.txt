@@ -89,7 +89,7 @@ add_library(
         ${MINI_FS_STRUCTURES_HEADERS}
 )
 get_target_property(MINI_FS_MODULE_SOURCES mini-fs-module-lib SOURCES)
-list(APPEND MINI_FS_MODULE_SOURCES mini-fs-module.c)
+list(APPEND MINI_FS_MODULE_SOURCES module/mini-fs-module.c)
 
 message("${MINI_FS_MODULE_SOURCES}")
 

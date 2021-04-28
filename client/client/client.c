@@ -1,11 +1,11 @@
 #include "client.h"
 
-#include <constants/commands.h>
-#include <constants/constants.h>
+#include <commands.h>
+
+#include "../../fs/module/constants/constants.h"
+
 #include <defines.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "connection.h"
@@ -42,7 +42,7 @@ char* parse_token(char* buffer, char* token) {
   return token_pos == NULL ? NULL : token_pos + 1;
 }
 
-int client_main(const char* address_string) {
+int client(const char* address_string) {
   int sockd = establish_connection(address_string);
 
   char buffer[MAX_PATH_LENGTH];

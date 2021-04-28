@@ -1,9 +1,17 @@
 #include "helpers.h"
-#include <linux/string.h>
 
 #include "string_utils.h"
 #include "disk_utils.h"
 #include "module_defines.h"
+
+#include <linux/string.h>
+
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
 
 int create_dir_block_and_inode(char* memory, struct superblock* sb, bool is_root,
                                     __u16 prev_inode_id, __u16* ret_inode_id) {
@@ -38,27 +46,27 @@ int create_dir_block_and_inode(char* memory, struct superblock* sb, bool is_root
 }
 
 // traverse recursive
-int traverse_recursively(char* memory, const char* path, struct fs_inode* current,
-                          struct fs_inode* res) {
-  cond_server_panic(current->is_file, "trying to enter file");
+int traverse_recursively(char* memory, const char* path, struct fs_inode* current_inode,
+                         struct fs_inode* res) {
+  cond_server_panic(current_inode->is_file, "trying to enter file");
 
   char current_layer[MAX_PATH_LENGTH];
   char* remaining_path = NULL;
   check_ret_code(parse_path(path, current_layer, &remaining_path));
 
   if (strcmp(current_layer, "/") == 0) {
-    memcpy(res, current, sizeof(struct fs_inode));
+    memcpy(res, current_inode, sizeof(struct fs_inode));
   } else {
     struct dir_record records[16];
 
     check_ret_code(read_dir_records(memory,
-                                    current->block_ids[0],
+                                    current_inode->block_ids[0],
                                     records,
-                                    current->size));
+                                    current_inode->size));
 
     bool dir_found = false;
     __u32 i = 0;
-    for (; i < current->size; ++i) {
+    for (; i < current_inode->size; ++i) {
       if (strcmp(records[i].name, current_layer) == 0) {
         dir_found = true;
 
@@ -76,7 +84,11 @@ int traverse_recursively(char* memory, const char* path, struct fs_inode* curren
     if (remaining_path == NULL) {
       memcpy(res, &next, sizeof(struct fs_inode));
     } else {
-      check_ret_code(traverse_recursively(memory, remaining_path, &next, res));
+      int ret = traverse_recursively(memory, remaining_path, &next, res);
+
+      if (ret < 0) {
+        return ret;
+      }
     }
   }
 
@@ -88,9 +100,9 @@ int traverse_path(char* memory, const char* path, struct fs_inode* res) {
   struct fs_inode cur_inode;
   check_ret_code(read_inode(memory, 1, &cur_inode));
 
-  check_ret_code(traverse_recursively(memory, path, &cur_inode, res));
+  int ret = traverse_recursively(memory, path, &cur_inode, res);
 
-  return 0;
+  return ret;
 }
 
 int parse_path(const char* path, char* next_token, char** res) {
@@ -125,7 +137,11 @@ int parse_path(const char* path, char* next_token, char** res) {
   return 0;
 }
 
+#include <linux/kernel.h>
+
 int split_path(const char* path, char* path_to_traverse, char* dir_name) {
+  printk(KERN_INFO "%s", path);
+
   __u16 path_length = strlen(path);
   char buffer[MAX_PATH_LENGTH];
   check_ret_code(delete_last_slash_and_copy_res(path, path_length, buffer));

@@ -6,6 +6,13 @@
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
 int check_if_obj_exists(char* memory, struct fs_inode* inode, __u16 block_id,
                         const char* name, __u16* res_inode_id,
                         bool* obj_exists) {

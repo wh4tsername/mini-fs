@@ -7,6 +7,13 @@
 #include "fs_io_utils.h"
 #include "module_defines.h"
 
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
 int write_superblock(char* memory, const struct superblock* sb) {
   write_retry(memory, (const char*)sb, SUPERBLOCK_SIZE, 0);
 

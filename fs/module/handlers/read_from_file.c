@@ -1,10 +1,18 @@
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/string.h>
+
 #include "../constants/fs_constants.h"
 #include "../server_utils/disk_utils.h"
 #include "../server_utils/module_defines.h"
 #include "handlers.h"
 
-int read_from_file(char* results, char* memory, __u16 file_descr,
-                    __u32 size) {
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
+int read_from_file(char* results, char* memory, __u16 file_descr, __u32 size) {
   // get descriptor table
   struct descriptor_table dt;
   check_ret_code(reset_descriptor_table(&dt));
@@ -50,7 +58,7 @@ int read_from_file(char* results, char* memory, __u16 file_descr,
       "read length is out of bounds");
   cond_server_panic(
       (__u64)fin_layer_shift + (__u64)(fin_layer - start_layer) *
-                                      (NUM_BLOCK_IDS_IN_INODE * FS_BLOCK_SIZE) >
+                                   (NUM_BLOCK_IDS_IN_INODE * FS_BLOCK_SIZE) >
           (__u64)cur_inode.size,
       "read length is out of bounds");
 
@@ -92,13 +100,17 @@ int read_from_file(char* results, char* memory, __u16 file_descr,
         right_block_shift = FS_BLOCK_SIZE;
       }
 
-      check_ret_code(read_block(memory, cur_inode.block_ids[j], left_block_shift, results,
-                 right_block_shift - left_block_shift));
-      int res_size = right_block_shift - left_block_shift;
+      check_ret_code(read_block(memory, cur_inode.block_ids[j],
+                                left_block_shift, results,
+                                right_block_shift - left_block_shift));
+
+      results += right_block_shift - left_block_shift;
     }
 
     cur_inode_id = cur_inode.inode_id;
   }
+
+  results[size] = '\0';
 
   // update fd pos
   dt.pos[file_descr] += size;

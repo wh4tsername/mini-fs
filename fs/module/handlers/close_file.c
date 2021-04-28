@@ -4,6 +4,13 @@
 
 #include "handlers.h"
 
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
 int close_file(char* results, char* memory, __u16 file_descr) {
   // get descriptor table
   struct descriptor_table dt;

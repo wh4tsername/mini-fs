@@ -2,6 +2,13 @@
 
 #include "../server_utils/module_defines.h"
 
+#include <linux/module.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Denis Pominov");
+MODULE_DESCRIPTION("Mini filesystem Linux module.");
+MODULE_VERSION("1.0");
+
 int reset_superblock(struct superblock* sb_pointer) {
   for (__u16 i = 0; i < NUM_BLOCKS; ++i) {
     sb_pointer->occupied_blocks_mask[i] = false;
