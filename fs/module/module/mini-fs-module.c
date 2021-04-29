@@ -47,8 +47,6 @@ ssize_t device_read(struct file* filp, char* buffer, size_t size,
 
   ret = copy_to_user(buffer, virtual_device.execute_results, size);
 
-  printk(KERN_INFO "%s", virtual_device.execute_results);
-
   return ret;
 }
 
