@@ -47,13 +47,14 @@ bool decode_commands(int fd, char* request) {
     case FS_INIT:
       log1("command: init");
 
-      write(dev, request, FS_SIZE);
+      error_cond_log(write(dev, request, FS_SIZE));
+
       break;
 
     case FS_DESTROY:
       log1("command: destroy");
 
-      write(dev, request, FS_SIZE);
+      error_cond_log(write(dev, request, FS_SIZE));
       break;
 
     case FS_LS:
@@ -65,7 +66,11 @@ bool decode_commands(int fd, char* request) {
       memcpy(request_it, path, path_len + 1);
       request_it += path_len;
 
-      write(dev, request, FS_SIZE);
+      error_cond_log(write(dev, request, FS_SIZE));
+      read(dev, request, FS_SIZE);
+
+      dprintf(fd, "%s", request);
+
       break;
 
     case FS_MKDIR:
@@ -77,8 +82,8 @@ bool decode_commands(int fd, char* request) {
       memcpy(request_it, path, path_len + 1);
       request_it += path_len;
 
-      write(dev, request, FS_SIZE);
-      break;
+      error_cond_log(write(dev, request, FS_SIZE));
+            break;
 
     case FS_RM:
       log1("command: rm");
@@ -89,7 +94,7 @@ bool decode_commands(int fd, char* request) {
       memcpy(request_it, path, path_len + 1);
       request_it += path_len;
 
-      write(dev, request, FS_SIZE);
+      error_cond_log(write(dev, request, FS_SIZE));
       break;
 
     case FS_TOUCH:
@@ -101,10 +106,8 @@ bool decode_commands(int fd, char* request) {
       memcpy(request_it, path, path_len + 1);
       request_it += path_len;
 
-      ssize_t res = write(dev, request, FS_SIZE);
-      if (res == -1) {
-        log1("ERROR");
-      }
+      error_cond_log(write(dev, request, FS_SIZE));
+
       break;
 
     case FS_OPEN:
@@ -116,14 +119,14 @@ bool decode_commands(int fd, char* request) {
       memcpy(request_it, path, path_len + 1);
       request_it += path_len;
 
-      write(dev, request, FS_SIZE);
+      error_cond_log(write(dev, request, FS_SIZE));
 
 //      sprintf(request, "%u", (unsigned char)1);
       read(dev, request, FS_SIZE);
 
 //      printf("%s", request);
 
-      dprintf(fd, "%u", (unsigned char)1);
+//      dprintf(fd, "%u", (unsigned char)1);
       dprintf(fd, "%s", request);
 //      send_string(fd, request);
       break;
@@ -136,7 +139,7 @@ bool decode_commands(int fd, char* request) {
       memcpy(request_it, &file_descr, sizeof(uint16_t));
       request_it += sizeof(uint16_t);
 
-      write(dev, request, FS_SIZE);
+      error_cond_log(write(dev, request, FS_SIZE));
       break;
 
     case FS_SEEK:
@@ -152,7 +155,7 @@ bool decode_commands(int fd, char* request) {
       memcpy(request_it, &pos, sizeof(uint32_t));
       request_it += sizeof(uint32_t);
 
-      write(dev, request, FS_SIZE);
+      error_cond_log(write(dev, request, FS_SIZE));
       break;
 
     case FS_WRITE:
@@ -177,7 +180,7 @@ bool decode_commands(int fd, char* request) {
       log2("file_descr: %d", file_descr);
       log2("size: %d", pos);
 
-      write(dev, request, FS_SIZE);
+      error_cond_log(write(dev, request, FS_SIZE));
 
 //      dprintf(STDERR_FILENO, "%s", request);
 //      fflush(stderr);
@@ -201,7 +204,7 @@ bool decode_commands(int fd, char* request) {
       log2("file_descr: %d", file_descr);
       log2("size: %d", pos);
 
-      write(dev, request, FS_SIZE);
+      error_cond_log(write(dev, request, FS_SIZE));
       read(dev, request, FS_SIZE);
 
       write(fd, request, pos);

@@ -13,4 +13,9 @@
   dprintf(STDERR_FILENO, msg);            \
   dprintf(STDERR_FILENO, "\n");
 
+#define error_cond_log(stmt)                             \
+  if ((stmt) < 0) {                                 \
+    dprintf(STDERR_FILENO, "SERVER LOG: ERROR!\n"); \
+  }
+
 #endif  // MINI_FS_FS_NET_LOG_H_

@@ -75,6 +75,7 @@ int open_file(char* results, char* memory, const char* path) {
   check_ret_code(occupy_descriptor(&dt, inode_id, &descr));
 
   sprintf(results, "%u", (unsigned char)1);
+  results += sizeof(unsigned char);
   sprintf(results, "fd: %hu\n", descr);
 
   // write descriptor table

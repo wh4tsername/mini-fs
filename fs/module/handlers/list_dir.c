@@ -23,13 +23,18 @@ int list_dir(char* results, char* memory, const char* path) {
   check_ret_code(read_dir_records(memory, block_id, records, inode.size));
 
   sprintf(results, "%u", (unsigned char)inode.size);
+  results += sizeof(unsigned char);
   for (__u32 i = 0; i < inode.size; ++i) {
     struct fs_inode obj_inode;
     check_ret_code(reset_inode(&obj_inode));
     check_ret_code(read_inode(memory, records[i].inode_id, &obj_inode));
 
-    sprintf(results, (obj_inode.is_file ? "%s - file\n" : "%s\n"),
+    const char* format = (obj_inode.is_file ? "%s - file\n" : "%s\n");
+
+    sprintf(results, format,
             records[i].name);
+
+    results += strlen(format) + strlen(records[i].name) - 2;
   }
 
   return 0;
