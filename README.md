@@ -4,9 +4,14 @@ Mini file system can store files of unlimited capacity due to nested inodes
 Mini fs has some capacity, which is easily increased by changing FS_BLOCK_SIZE constant  
 ### BUILD & EXECUTE
 Use CMakeLists.txt to build project  
-In build directory you will find server and client binaries:  
-- `./server port` - to run server  
-- `./client address:port` - to run client  
+In build directory you will find server, client binaries and kernel module:  
+- `./fs/mini_fs_server port` - to run server  
+- `./client/mini_fs_client address:port` - to run client  
+- `./fs/module/mini-fs-module.ko` - module  
+To insert module use `insmod`, to remove `rmmod`  
+To checkout kernel logs use `dmesg`,  
+Before running server make sure you have create character file `/dev/mini-fs`  
+To create character file use `mknod /dev/mini-fs c major_number_from_logs 0`  
 ### COMMANDS  
 `quit` - to quit mini-fs client  
 `init` - to initialise mini-fs  
