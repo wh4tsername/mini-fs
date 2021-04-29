@@ -137,11 +137,7 @@ int parse_path(const char* path, char* next_token, char** res) {
   return 0;
 }
 
-#include <linux/kernel.h>
-
 int split_path(const char* path, char* path_to_traverse, char* dir_name) {
-  printk(KERN_INFO "%s", path);
-
   __u16 path_length = strlen(path);
   char buffer[MAX_PATH_LENGTH];
   check_ret_code(delete_last_slash_and_copy_res(path, path_length, buffer));
